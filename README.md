@@ -1,4 +1,4 @@
-# PetPilot / Shelter Signal
+# PetPilot 
 
 Shelter management front end (foster roster, medical calendar, intake & outcomes)
 plus the **remarks router** — the piece that turns a free-text observation a
