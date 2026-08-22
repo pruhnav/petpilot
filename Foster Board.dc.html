@@ -69,6 +69,13 @@
   .tag { white-space: nowrap; }
   .pp-label { display: block; font: 600 10px/1 "Barlow", sans-serif; letter-spacing: .1em;
     text-transform: uppercase; color: var(--color-neutral-600); margin-bottom: 5px; }
+  .pp-chip { display: inline-block; font: 600 10px/1 "Barlow", sans-serif; letter-spacing: .08em;
+    text-transform: uppercase; padding: 4px 7px; border-radius: var(--radius-sm);
+    border: 1px solid var(--color-divider); color: var(--color-neutral-800); background: transparent; }
+  .pp-chip[data-sev="urgent"] { border-color: var(--color-accent-800); background: var(--color-accent-800); color: #f2f2f3; }
+  .pp-chip[data-sev="attention"] { border-color: var(--color-accent); color: var(--color-accent-800);
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent); }
+  .pp-chip[data-sev="routine"] { border-color: var(--color-divider); color: var(--color-neutral-700); }
 </style>
 </helmet>
 
@@ -337,13 +344,35 @@
                   <td style="vertical-align: top; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-accent-800);">{{ e.label }}</td>
                   <td>
                     <div style="line-height: 1.45;">{{ e.note }}</div>
+                    <sc-if value="{{ e.routed }}">
+                      <div style="margin-top: 5px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <span class="pp-chip" data-sev="{{ e.severity }}">{{ e.chipLabel }}</span>
+                        <span style="font-size: 11px; color: var(--color-neutral-700);">→ {{ e.recipients }}</span>
+                      </div>
+                    </sc-if>
                     <div style="font-size: 11px; color: var(--color-neutral-600); margin-top: 2px;">{{ e.meta }}</div>
                   </td>
                 </tr>
               </sc-for>
             </tbody>
           </table>
-          <button class="btn btn-secondary btn-block" style="height: 30px; font-size: 12px;" type="button" onClick="{{ noop }}">{{ panelAction }}</button>
+
+          <sc-if value="{{ showCompose }}">
+            <div style="margin-top: 14px; border: 1px solid var(--color-divider); background: var(--color-neutral-200);">
+              <div style="padding: 5px 12px; border-bottom: 1px solid var(--color-divider); font: 600 11px/1.4 'Barlow', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--color-neutral-700);">New remark</div>
+              <div style="padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+                <textarea class="pp-input" style="height: auto; min-height: 60px; padding: 8px; resize: vertical; font-family: 'Barlow', sans-serif;" placeholder="Describe what you saw — e.g. peed purple this morning, seemed fine otherwise" value="{{ composeText }}" onInput="{{ onComposeInput }}" onKeyDown="{{ onComposeKey }}"></textarea>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <button class="btn btn-primary blueprint" style="min-height: 30px; padding: 6px 16px; font-size: 12px;" type="button" data-busy="{{ composeBusy }}" onClick="{{ submitRemark }}">{{ composeButtonLabel }}<i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i></button>
+                  <span style="font-size: 11px; color: {{ composeStatusColor }};">{{ composeStatus }}</span>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showPanelActionButton }}">
+            <button class="btn btn-secondary btn-block" style="height: 30px; font-size: 12px; margin-top: 14px;" type="button" onClick="{{ noop }}">{{ panelAction }}</button>
+          </sc-if>
         </div>
       </aside>
     </div>
@@ -544,8 +573,21 @@ const STATUS_OPTIONS = ["All statuses", "In foster", "Medical foster", "Hospice 
 const FLAG_OPTIONS = ["All flags", "Camera anomaly", "Under observation", "No open flags"];
 const FLAG_BY_OPTION = { "Camera anomaly": "alert", "Under observation": "watch", "No open flags": "clear" };
 
+const REMARKS_API = "http://localhost:3001";
+
+// Maps the backend's six labels to a display chip + severity styling.
+const LABEL_DISPLAY = {
+  medical_urgent:  { chip: "Medical urgent",  sev: "urgent" },
+  medical_routine: { chip: "Medical routine", sev: "routine" },
+  behavior:        { chip: "Behavior",        sev: "attention" },
+  facility:        { chip: "Facility",        sev: "attention" },
+  enrichment:      { chip: "Enrichment",      sev: "routine" },
+  unclear:         { chip: "Needs triage",    sev: "attention" }
+};
+
 class Component extends DCLogic {
-  state = { query: "", status: "All statuses", flagFilter: "All flags", panel: null, tab: "foster", data: ANIMALS, refreshNote: "", month: 7 };
+  state = { query: "", status: "All statuses", flagFilter: "All flags", panel: null, tab: "foster", data: ANIMALS, refreshNote: "", month: 7,
+    composeText: "", composeBusy: false, composeStatus: "", composeStatusColor: "" };
 
   buildCalendar(month, nameFor) {
     const first = new Date(2026, month, 1).getDay();
@@ -585,9 +627,89 @@ class Component extends DCLogic {
   open(kind) {
     return (ev) => {
       const id = ev.currentTarget.getAttribute("data-id");
-      this.setState({ panel: { kind, id } });
+      // Reset the compose box each time a panel opens.
+      this.setState({ panel: { kind, id }, composeText: "", composeStatus: "", composeBusy: false });
     };
   }
+
+  onComposeInput = (e) => {
+    this.setState({ composeText: e.target.value });
+  };
+
+  onComposeKey = (e) => {
+    // Cmd/Ctrl+Enter submits.
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") this.submitRemark();
+  };
+
+  submitRemark = () => {
+    const text = (this.state.composeText || "").trim();
+    const panel = this.state.panel;
+    if (!text || !panel || this.state.composeBusy) return;
+    const dogId = panel.id;
+
+    this.setState({ composeBusy: true, composeStatus: "Classifying and routing…", composeStatusColor: "var(--color-neutral-700)" });
+
+    fetch(REMARKS_API + "/remarks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, dogId })
+    })
+      .then((res) => {
+        if (!res.ok) return res.json().then((e) => { throw new Error(e.error || ("HTTP " + res.status)); });
+        return res.json();
+      })
+      .then((rec) => {
+        const disp = LABEL_DISPLAY[rec.label] || LABEL_DISPLAY.unclear;
+        const recipients = Array.isArray(rec.recipients) ? rec.recipients.join(", ") : "";
+        // Did every routed alert actually send?
+        const results = (rec.send && rec.send.results) || [];
+        const sentCount = results.filter((r) => r.status === "sent").length;
+        const needsAuth = results.some((r) => r.status === "needs_auth");
+        const anyError = results.some((r) => r.status === "error");
+
+        const newRow = {
+          date: "Just now",
+          label: disp.chip,
+          note: text,
+          meta: "Reported via PetPilot · " + (rec.reason || ""),
+          // extra fields the drawer renders as a chip + recipients line
+          routed: true,
+          chipLabel: disp.chip,
+          severity: disp.sev,
+          recipients
+        };
+
+        // Immutably prepend the new remark onto this dog's remarks[] so the
+        // runtime re-renders. Fall back to ANIMALS if this id isn't in state yet.
+        const data = this.state.data.map((a) =>
+          a.id === dogId ? { ...a, remarks: [newRow, ...a.remarks] } : a
+        );
+
+        let status, color;
+        if (needsAuth) {
+          status = "Added. Slack needs one-time authorization — check the backend log for the link.";
+          color = "var(--color-accent-800)";
+        } else if (sentCount > 0) {
+          status = "Routed to " + recipients + " · Slack alert sent";
+          color = "var(--color-accent-800)";
+        } else if (anyError) {
+          status = "Added, but the Slack send failed — see backend log.";
+          color = "var(--color-accent-800)";
+        } else {
+          status = "Added and logged for " + recipients + ".";
+          color = "var(--color-neutral-700)";
+        }
+
+        this.setState({ data, composeText: "", composeBusy: false, composeStatus: status, composeStatusColor: color });
+      })
+      .catch((err) => {
+        this.setState({
+          composeBusy: false,
+          composeStatus: "Couldn't reach the router (" + err.message + "). Is the backend running on :3001?",
+          composeStatusColor: "var(--color-accent-800)"
+        });
+      });
+  };
 
   renderVals() {
     const density = this.props.density ?? "Comfortable";
@@ -679,7 +801,19 @@ class Component extends DCLogic {
       panelTitle: animal ? animal.name + " · " + animal.id : "",
       panelSubtitle: meta ? meta.sub : "",
       panelAction: meta ? meta.action : "",
-      panelEntries: animal ? animal[meta.key] : []
+      panelEntries: animal ? animal[meta.key] : [],
+      // Compose box only appears in the Remarks panel; the other panels keep
+      // their original (inert) action button.
+      showCompose: !!(p && p.kind === "remarks"),
+      showPanelActionButton: !!(p && p.kind !== "remarks"),
+      composeText: this.state.composeText,
+      composeBusy: this.state.composeBusy ? "1" : "0",
+      composeButtonLabel: this.state.composeBusy ? "Sending…" : "Classify & route",
+      composeStatus: this.state.composeStatus,
+      composeStatusColor: this.state.composeStatusColor || "var(--color-neutral-700)",
+      onComposeInput: this.onComposeInput,
+      onComposeKey: this.onComposeKey,
+      submitRemark: this.submitRemark
     };
   }
 }
