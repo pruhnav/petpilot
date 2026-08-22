@@ -1,8 +1,8 @@
 /** The harness: a local server that turns the triage agent into an ambient one.
  *
  *  Two layers, kept deliberately apart:
- *    - Arcade SDK (API key + user id): pre-authorizes Google and Slack, polls
- *      Gmail, sends the demo emails. Plumbing.
+ *    - Arcade SDK (API key + user id): pre-authorizes Google and Slack.
+ *      Plumbing. (Gmail poll / demo-email path is parked until needed.)
  *    - MCP gateway: every tool call the agent makes. See GATEWAY_AUTH for how
  *      this client authenticates to it.
  *
@@ -15,10 +15,9 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { streamSSE } from "hono/streaming";
 
-import { PORT, POLL_MS, SLACK_CHANNEL, ARCADE_USER_ID } from "./config.js";
+import { PORT, SLACK_CHANNEL, ARCADE_USER_ID } from "./config.js";
 import {
   awaitConnect,
-  fetchApplications,
   providerState,
   sendDemoEmail,
   startConnect,
@@ -34,15 +33,70 @@ import {
   storeGatewayTokens,
 } from "./gateway.js";
 import { completeGatewayAuth } from "./oauth.js";
-import { triage, type TriageEvent } from "./triage.js";
+import { triage, type DogEvent, type TriageEvent } from "./triage.js";
 import { formToEmail, GENUINE_SAMPLES, SPAM_SAMPLES } from "./applications.js";
 import { DOGS, ORG } from "./dogs.js";
 
 type Feed =
   | { type: "log"; level: "info" | "warn" | "error"; text: string }
-  | { type: "email"; subject: string; from: string }
-  | { type: "triage"; event: TriageEvent }
-  | { type: "tick"; at: number; every: number; ignored: number };
+  | { type: "observation"; dogName: string; description: string; confidence: number }
+  | { type: "triage"; event: TriageEvent };
+
+/**
+ * TEMPORARY — mock observation events until the upstream vision / observation
+ * engine is wired. Replace this list (and /api/demo-event) with real pipeline
+ * ingestion; do not treat these as production fixtures.
+ */
+const SAMPLE_DOG_EVENTS: DogEvent[] = [
+  {
+    dogId: "dog_biscuit",
+    dogName: "Biscuit",
+    eventType: "anomaly",
+    description: "hasn't eaten in 18 hours",
+    observedAt: new Date().toISOString(),
+    confidence: 0.91,
+  },
+  {
+    dogId: "dog_marigold",
+    dogName: "Marigold",
+    eventType: "anomaly",
+    description: "limping on hind leg after yard time",
+    observedAt: new Date().toISOString(),
+    confidence: 0.87,
+  },
+  {
+    dogId: "dog_juniper",
+    dogName: "Juniper",
+    eventType: "event",
+    description: "seems anxious around new volunteers",
+    observedAt: new Date().toISOString(),
+    confidence: 0.84,
+  },
+  {
+    dogId: "dog_waffles",
+    dogName: "Waffles",
+    eventType: "routine",
+    description: "finished full bowl at breakfast",
+    observedAt: new Date().toISOString(),
+    confidence: 0.96,
+  },
+  {
+    dogId: "dog_tofu",
+    dogName: "Tofu",
+    eventType: "event",
+    description: "kennel latch sticks occasionally",
+    observedAt: new Date().toISOString(),
+    confidence: 0.79,
+  },
+  {
+    dogId: "dog_olive",
+    dogName: "Olive",
+    eventType: "anomaly",
+    description: "possible limp — camera angle unclear, may be shadow",
+    observedAt: new Date().toISOString(),
+    confidence: 0.42,
+  },
+];
 
 const subscribers = new Set<(f: Feed) => void>();
 const publish = (f: Feed) => {
@@ -161,7 +215,7 @@ app.get("/oauth/callback", async (c) => {
   try {
     const { tokens, clientInformation } = await completeGatewayAuth(params);
     const connected = await storeGatewayTokens(clientInformation, tokens);
-    log(connected ? "Gateway authorized. Watching for applications." : "Gateway authorized, but it returned no tools.", connected ? "info" : "warn");
+    log(connected ? "Gateway authorized. Ready for DogOS events." : "Gateway authorized, but it returned no tools.", connected ? "info" : "warn");
     return c.html("<title>Connected</title><body style=\"font:16px system-ui;padding:3rem\">Gateway connected. You can close this tab.</body>");
   } catch (e) {
     const error = e instanceof Error ? e.message : String(e);
@@ -212,22 +266,44 @@ app.post("/apply", async (c) => {
   }
 });
 
-app.post("/api/demo-email", async (c) => {
+/**
+ * TEMPORARY — manual trigger for SAMPLE_DOG_EVENTS. Replaces Gmail polling
+ * until the observation engine posts real DogEvent payloads here.
+ *
+ *   POST /api/demo-event?i=0     — cycle by index (default 0)
+ *   POST /api/demo-event?kind=low — force the low-confidence / human-review sample
+ */
+app.post("/api/demo-event", async (c) => {
+  if (!gatewayConnected()) {
+    return c.json({ ok: false, error: "Gateway not connected." }, 400);
+  }
   const params = new URL(c.req.url).searchParams;
-  const spam = params.get("kind") === "spam";
-  const pool = spam ? SPAM_SAMPLES : GENUINE_SAMPLES;
-  const sample = pool[Number(params.get("i") ?? 0) % pool.length];
+  const low = params.get("kind") === "low";
+  const event = low
+    ? SAMPLE_DOG_EVENTS.find((e) => e.confidence < 0.7) ?? SAMPLE_DOG_EVENTS.at(-1)!
+    : SAMPLE_DOG_EVENTS[Number(params.get("i") ?? 0) % SAMPLE_DOG_EVENTS.length];
+
+  // Fresh timestamp each run so calendar/sheet rows don't all share seed time.
+  const payload: DogEvent = { ...event, observedAt: new Date().toISOString() };
+
+  log(
+    low
+      ? `Mock event (low confidence): ${payload.dogName} — ${payload.description}`
+      : `Mock event: ${payload.dogName} — ${payload.description} (${payload.confidence})`,
+  );
+  publish({
+    type: "observation",
+    dogName: payload.dogName,
+    description: payload.description,
+    confidence: payload.confidence,
+  });
+
   try {
-    await sendDemoEmail(formToEmail(sample));
-    log(
-      spam
-        ? `Form spam sent: ${sample.name}`
-        : `Application sent: ${sample.name} → ${sample.dog}`,
-    );
-    return c.json({ ok: true });
+    await triage(payload, (triageEvent) => publish({ type: "triage", event: triageEvent }));
+    return c.json({ ok: true, event: payload });
   } catch (e) {
     const error = e instanceof Error ? e.message : String(e);
-    log(`Could not send: ${error}`, "error");
+    log(`Triage failed: ${error}`, "error");
     return c.json({ ok: false, error }, 500);
   }
 });
@@ -241,57 +317,14 @@ app.get("/api/events", (c) =>
   }),
 );
 
-/** Emails already in the inbox when polling starts are NOT triaged.
- *
- *  Otherwise connecting the gateway would fire a run for every old application
- *  at once — a genuinely bad surprise thirty seconds into a talk. The first poll
- *  only records what it sees. */
-const seen = new Set<string>();
-let primed = false;
-let busy = false;
-
-async function poll() {
-  // Nothing to triage with until the gateway is live, and polling before Google
-  // is connected just logs 403s. Stay quiet until the setup is actually done.
-  if (busy || !gatewayConnected()) return;
-  busy = true;
-  try {
-    const applications = await fetchApplications();
-
-    if (!primed) {
-      for (const a of applications) seen.add(a.id);
-      primed = true;
-      log(`Watching for applications. Ignoring ${applications.length} already in the inbox.`);
-      return;
-    }
-
-    // Announce every check, including the boring ones. A silent server is
-    // indistinguishable from a hung one, and "mail that isn't an application
-    // costs nothing" is only convincing if you can watch the nothing happen.
-    publish({ type: "tick", at: Date.now(), every: POLL_MS, ignored: seen.size });
-
-    for (const application of applications.reverse()) {
-      if (seen.has(application.id)) continue;
-      seen.add(application.id);
-      publish({ type: "email", subject: application.subject, from: application.from });
-      await triage(application, (event) => publish({ type: "triage", event }));
-    }
-  } catch (e) {
-    log(`Poll failed: ${e instanceof Error ? e.message : String(e)}`, "warn");
-  } finally {
-    busy = false;
-  }
-}
-
 serve({ fetch: app.fetch, port: PORT }, async (info) => {
   console.log(`\n  Console → http://localhost:${info.port}`);
   console.log(`  Public form → http://localhost:${info.port}/apply\n`);
   console.log(`  Acting as: ${ARCADE_USER_ID}`);
-  console.log(`  Slack channel: #${SLACK_CHANNEL}\n`);
+  console.log(`  Slack channel: #${SLACK_CHANNEL}`);
+  console.log(`  TEMPORARY: use Run sample event (no Gmail poll)\n`);
 
   // Reconnect to the gateway used last time, with any tokens already on disk, so
   // a restart doesn't ask you to redo setup you already did.
   if (await restoreGateway()) log("Gateway restored from last run.");
-
-  setInterval(() => void poll(), POLL_MS);
 });

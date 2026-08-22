@@ -409,7 +409,7 @@
   <header>
     <div>
       <div class="eyebrow">{{ORG}}</div>
-      <h1>Application intake</h1>
+      <h1>DogOS care triage</h1>
       <div class="who" id="who"></div>
     </div>
     <div class="pulse" id="pulse" hidden><i></i> Listening</div>
@@ -417,7 +417,7 @@
 
   <!-- Phase 1: nothing connected. One button, two OAuth flows. -->
   <section id="phase-connect" hidden>
-    <p class="lede">An agent that reads adoption applications and files them.
+    <p class="lede">An agent that triages shelter-dog care events.
       First, let it act on your behalf.</p>
     <div class="actions">
       <button id="connect" class="big">Connect</button>
@@ -438,12 +438,12 @@
     </div>
   </section>
 
-  <!-- Phase 3: live. -->
+  <!-- Phase 3: live. TEMPORARY mock events until vision pipeline is wired. -->
   <section id="phase-ready" hidden>
     <div class="actions">
-      <button id="send">Send application</button>
-      <button id="spam" class="amber">Send form spam</button>
-      <span class="hint">&larr; the agent should refuse this one</span>
+      <button id="send">Run sample event</button>
+      <button id="spam" class="amber">Run low-confidence</button>
+      <span class="hint">&larr; should Slack for human review, no calendar/email</span>
     </div>
   </section>
 
@@ -452,7 +452,7 @@
       <span class="lbl">Activity</span><i></i>
       <span class="scan" id="scan" hidden><em></em><b id="scan-text">idle</b></span>
     </div>
-    <div id="feed"><div class="idle">Waiting for the first application</div></div>
+    <div id="feed"><div class="idle">Waiting for a sample event</div></div>
   </section>
 </main>
 
@@ -623,19 +623,20 @@ $("auth").addEventListener("click", async (e) => {
 });
 
 async function send(kind, i) {
-  const r = await fetch(`/api/demo-email?kind=${kind}&i=${i}`, { method: "POST" }).then((x) => x.json());
-  if (!r.ok) text("err", "!", r.error ?? "Send failed");
+  const qs = kind === "low" ? "kind=low" : `i=${i}`;
+  const r = await fetch(`/api/demo-event?${qs}`, { method: "POST" }).then((x) => x.json());
+  if (!r.ok) text("err", "!", r.error ?? "Event failed");
 }
 
 $("send").addEventListener("click", async (e) => {
   e.target.disabled = true;
-  await send("application", iApp++);
+  await send("sample", iApp++);
   setTimeout(() => { e.target.disabled = false; }, 2000);
 });
 
 $("spam").addEventListener("click", async (e) => {
   e.target.disabled = true;
-  await send("spam", iSpam++);
+  await send("low", iSpam++);
   setTimeout(() => { e.target.disabled = false; }, 2000);
 });
 
@@ -652,10 +653,10 @@ new EventSource("/api/events").onmessage = (msg) => {
 
   if (f.type === "tick") tick(f);
 
-  if (f.type === "email") {
+  if (f.type === "observation") {
     working = true;
     paint();
-    text("mail", "✉", f.subject);
+    text("mail", "◎", `${f.dogName}: ${f.description} (${f.confidence})`);
   }
 
   if (f.type === "triage") {
@@ -663,7 +664,7 @@ new EventSource("/api/events").onmessage = (msg) => {
     if (e.kind === "tool") toolRow("tool", "→", e.name);
     if (e.kind === "tool-result") toolRow(e.ok ? "ok" : "fail", e.ok ? "✓" : "✕", e.name, e.ok ? "" : " failed");
     if (e.kind === "step") text("note", "", e.text, { prose: true });
-    if (e.kind === "rejected") text("reject", "⊘", `Not an application — ${e.reason}`, { prose: true });
+    if (e.kind === "rejected") text("reject", "⊘", `Skipped — ${e.reason}`, { prose: true });
     if (e.kind === "done") text("done", "✓", "Triage complete");
     if (e.kind === "error") text("err", "✕", e.message, { prose: true });
     if (["done", "rejected", "error"].includes(e.kind)) { working = false; paint(); }

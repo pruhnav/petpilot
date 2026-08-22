@@ -1,16 +1,15 @@
-/** One-time setup: build the adopter Sheet in YOUR OWN Google
+/** One-time setup: build the care event-log Sheet in YOUR OWN Google
  *  account. Nothing is shared — no common credentials, no common state.
  *
  *      npm run seed
  *
- *  Inbound applications are NOT seeded here. The server's "Send demo email"
- *  button provides those on demand, so you can trigger a triage run whenever
- *  you want instead of racing a pre-filled inbox.
+ *  Observation events are NOT seeded here as live triggers. The server's
+ *  temporary "Run sample event" button provides those on demand until the
+ *  vision pipeline is wired.
  */
 import Arcade from "@arcadeai/arcadejs";
 import { ARCADE_API_KEY, ARCADE_USER_ID } from "./config.js";
-import { HEADERS, ORG, SHEET_TITLE } from "./dogs.js";
-import { EXISTING_ROWS } from "./applications.js";
+import { HEADERS, ORG, SEED_ROWS, SHEET_TITLE } from "./dogs.js";
 
 const arcade = new Arcade({ apiKey: ARCADE_API_KEY });
 
@@ -35,7 +34,7 @@ async function run(toolName: string, input: Record<string, unknown>) {
  *  unrelated sheets — so match the name here instead of trusting the API. */
 async function findSheet(): Promise<{ id: string; url: string } | null> {
   const out = await run("GoogleSheets_SearchSpreadsheets", {
-    spreadsheet_contains: ["Adopter Pipeline"],
+    spreadsheet_contains: ["Care Event Log"],
     limit: 50,
   });
   const sheets = (out?.spreadsheets ?? []) as Record<string, string>[];
@@ -44,7 +43,7 @@ async function findSheet(): Promise<{ id: string; url: string } | null> {
 }
 
 async function buildSheet() {
-  const rows = [HEADERS as unknown as string[], ...EXISTING_ROWS].map((row) => ({
+  const rows = [HEADERS as unknown as string[], ...SEED_ROWS].map((row) => ({
     values: row.map((cell) => ({ userEnteredValue: { stringValue: cell } })),
   }));
 

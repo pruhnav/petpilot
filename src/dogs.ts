@@ -20,15 +20,68 @@ export const ORG = "Mateo's Dog System";
 
 /** NOTE: this is matched against the live Sheet by title. Change ORG and the
  *  agent will look for a Sheet that does not exist yet — re-run `npm run seed`. */
-export const SHEET_TITLE = `${ORG} — Adopter Pipeline`;
+export const SHEET_TITLE = `${ORG} — Care Event Log`;
 
+/** Append-only care event log. Column order must match triage.ts instructions. */
 export const HEADERS = [
-  "Applicant Name",
-  "Email",
-  "Phone",
-  "Dog of Interest",
-  "Application Date",
-  "Status",
-  "Assigned Volunteer",
-  "Meet & Greet",
+  "Timestamp",
+  "Dog ID",
+  "Dog Name",
+  "Event Type",
+  "Description",
+  "Confidence",
+  "Category",
+  "Severity",
+  "Action Taken",
+  "Human Review",
+  "Notes",
 ] as const;
+
+const daysAgoIso = (n: number) => {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString();
+};
+
+/** A few already-triaged rows so the Sheet isn't empty on a projector. */
+export const SEED_ROWS: string[][] = [
+  [
+    daysAgoIso(5),
+    "dog_olive",
+    "Olive",
+    "routine",
+    "Finished full bowl at breakfast",
+    "0.94",
+    "Medical",
+    "routine",
+    "logged",
+    "no",
+    "Routine/Medical: normal appetite note, no clinical concern.",
+  ],
+  [
+    daysAgoIso(3),
+    "dog_juniper",
+    "Juniper",
+    "event",
+    "Seems anxious around new volunteers",
+    "0.88",
+    "Behavior",
+    "attention",
+    "logged,slack",
+    "no",
+    "Attention/Behavior: anxiety around strangers is temperament, not injury.",
+  ],
+  [
+    daysAgoIso(1),
+    "dog_biscuit",
+    "Biscuit",
+    "anomaly",
+    "Limping on hind leg after yard time",
+    "0.91",
+    "Medical",
+    "urgent",
+    "logged,slack,calendar",
+    "no",
+    "Urgent/Medical: acute limp implies exam; booked vet hold.",
+  ],
+];
