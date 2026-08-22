@@ -1,0 +1,17 @@
+{
+  "name": "remarks-router",
+  "version": "1.0.0",
+  "description": "Weird-observation router for the shelter 'remarks' button: classify free text, route to the right team, send via Arcade.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node build_seed.js",
+    "test": "node test_pipeline.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.1",
+    "@arcadeai/arcadejs": "^2.4.1",
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

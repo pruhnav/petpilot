@@ -1,8 +1,9 @@
 node_modules/
 
-# Secrets. ARCADE_API_KEY and ANTHROPIC_API_KEY live here.
+# Secrets — NEVER commit these. ARCADE_API_KEY and ANTHROPIC_API_KEY live here.
 .env
 .env.local
+*.env
 
 # Gateway OAuth tokens for the MCP client.
 .arcade-oauth.json
@@ -15,4 +16,8 @@ node_modules/
 __pycache__/
 *.pyc
 
+# Logs and OS cruft
+npm-debug.log*
+*.log
 .DS_Store
+Thumbs.db
