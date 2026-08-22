@@ -1,0 +1,440 @@
+[
+  {
+    "id": "seed_1",
+    "text": "Peed purple this morning, seemed fine otherwise",
+    "label": "medical_urgent",
+    "confidence": 0.96,
+    "reason": "Abnormal urine color can signal internal bleeding or toxin exposure and warrants same-day vet review.",
+    "precedent": {
+      "id": "p1",
+      "text": "Dog urinated a dark purple color this morning",
+      "label": "medical_urgent",
+      "routedTo": [
+        "#shelter-medical",
+        "#shelter-managers"
+      ]
+    },
+    "recipients": [
+      "#shelter-medical",
+      "#shelter-managers"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#shelter-medical",
+          "status": "sent (seeded)"
+        },
+        {
+          "channel": "#shelter-managers",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T06:59:02.801Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_2",
+    "text": "Bella threw up her breakfast twice and won't touch water",
+    "label": "medical_urgent",
+    "confidence": 0.9,
+    "reason": "Repeated vomiting with refusal to drink risks dehydration and needs urgent medical attention.",
+    "precedent": {
+      "id": "p2",
+      "text": "Bloody discharge noticed during afternoon walk",
+      "label": "medical_urgent",
+      "routedTo": [
+        "#shelter-medical",
+        "#shelter-managers"
+      ]
+    },
+    "recipients": [
+      "#shelter-medical",
+      "#shelter-managers"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#shelter-medical",
+          "status": "sent (seeded)"
+        },
+        {
+          "channel": "#shelter-managers",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T07:59:02.814Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_3",
+    "text": "Max is dragging his back leg after the afternoon play session",
+    "label": "medical_urgent",
+    "confidence": 0.82,
+    "reason": "A suddenly non-weight-bearing limb may indicate injury and should be seen the same day.",
+    "precedent": {
+      "id": "p3",
+      "text": "Slight limp on back left leg, still playful",
+      "label": "medical_routine",
+      "routedTo": [
+        "#shelter-medical"
+      ]
+    },
+    "recipients": [
+      "#shelter-medical",
+      "#shelter-managers"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#shelter-medical",
+          "status": "sent (seeded)"
+        },
+        {
+          "channel": "#shelter-managers",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T08:59:02.814Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_4",
+    "text": "Small scrape on Coco's paw pad, she's still walking normally",
+    "label": "medical_routine",
+    "confidence": 0.8,
+    "reason": "A minor superficial wound with normal mobility is a non-urgent medical note.",
+    "precedent": {
+      "id": "p3",
+      "text": "Slight limp on back left leg, still playful",
+      "label": "medical_routine",
+      "routedTo": [
+        "#shelter-medical"
+      ]
+    },
+    "recipients": [
+      "#shelter-medical"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#shelter-medical",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T09:59:02.814Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_5",
+    "text": "Luna is due for her rabies booster next week",
+    "label": "medical_routine",
+    "confidence": 0.88,
+    "reason": "A scheduled routine vaccination is a standard medical-records task.",
+    "precedent": {
+      "id": "p3",
+      "text": "Slight limp on back left leg, still playful",
+      "label": "medical_routine",
+      "routedTo": [
+        "#shelter-medical"
+      ]
+    },
+    "recipients": [
+      "#shelter-medical"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#shelter-medical",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T10:59:02.814Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_6",
+    "text": "Charlie growled and snapped when I reached near his food bowl",
+    "label": "behavior",
+    "confidence": 0.9,
+    "reason": "Resource guarding around food is a behavioral concern for the behavior team to assess.",
+    "precedent": {
+      "id": "p4",
+      "text": "Growled and snapped when approached near food bowl",
+      "label": "behavior",
+      "routedTo": [
+        "#behavior-team"
+      ]
+    },
+    "recipients": [
+      "#behavior-team"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#behavior-team",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T11:59:02.814Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_7",
+    "text": "Rocky hid in the back of his kennel and shook after a loud visitor",
+    "label": "behavior",
+    "confidence": 0.85,
+    "reason": "Fearful withdrawal following a stressor is a behavioral change worth tracking.",
+    "precedent": {
+      "id": "p5",
+      "text": "Hid in the back of the kennel after a visitor left",
+      "label": "behavior",
+      "routedTo": [
+        "#behavior-team"
+      ]
+    },
+    "recipients": [
+      "#behavior-team"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#behavior-team",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T12:59:02.814Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_8",
+    "text": "The new dog keeps pacing the fence line and won't settle",
+    "label": "behavior",
+    "confidence": 0.78,
+    "reason": "Persistent pacing can indicate stress or anxiety and is a behavioral observation.",
+    "precedent": {
+      "id": "p5",
+      "text": "Hid in the back of the kennel after a visitor left",
+      "label": "behavior",
+      "routedTo": [
+        "#behavior-team"
+      ]
+    },
+    "recipients": [
+      "#behavior-team"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#behavior-team",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T13:59:02.814Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_9",
+    "text": "Latch on kennel A3 is broken, door won't stay shut",
+    "label": "facility",
+    "confidence": 0.94,
+    "reason": "A broken kennel latch is a containment/safety issue for operations to fix.",
+    "precedent": {
+      "id": "p6",
+      "text": "Kennel latch on A3 is broken and won't stay shut",
+      "label": "facility",
+      "routedTo": [
+        "#operations"
+      ]
+    },
+    "recipients": [
+      "#operations"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#operations",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T14:59:02.814Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_10",
+    "text": "Water line by the play yard is leaking onto the floor",
+    "label": "facility",
+    "confidence": 0.9,
+    "reason": "A leak creating a wet floor is a facility hazard for operations.",
+    "precedent": {
+      "id": "p7",
+      "text": "Water bowl area flooding, floor is soaked",
+      "label": "facility",
+      "routedTo": [
+        "#operations"
+      ]
+    },
+    "recipients": [
+      "#operations"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#operations",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T15:59:02.814Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_11",
+    "text": "It's really cold in room B, the heater might be out",
+    "label": "facility",
+    "confidence": 0.83,
+    "reason": "A possible heating failure affecting animal comfort is a facilities issue.",
+    "precedent": {
+      "id": "p7",
+      "text": "Water bowl area flooding, floor is soaked",
+      "label": "facility",
+      "routedTo": [
+        "#operations"
+      ]
+    },
+    "recipients": [
+      "#operations"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#operations",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T16:59:02.815Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_12",
+    "text": "Bruno had a fantastic long walk and played fetch for 20 minutes",
+    "label": "enrichment",
+    "confidence": 0.92,
+    "reason": "A positive activity and play note is enrichment, not a health or behavior concern.",
+    "precedent": {
+      "id": "p8",
+      "text": "Had a great long walk and played fetch for 20 minutes",
+      "label": "enrichment",
+      "routedTo": [
+        "#enrichment"
+      ]
+    },
+    "recipients": [
+      "#enrichment"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#enrichment",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T17:59:02.815Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_13",
+    "text": "Spent 15 minutes doing socialization with the shy terrier, big progress",
+    "label": "enrichment",
+    "confidence": 0.88,
+    "reason": "A socialization session update is an enrichment log entry.",
+    "precedent": {
+      "id": "p8",
+      "text": "Had a great long walk and played fetch for 20 minutes",
+      "label": "enrichment",
+      "routedTo": [
+        "#enrichment"
+      ]
+    },
+    "recipients": [
+      "#enrichment"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#enrichment",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T18:59:02.815Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_14",
+    "text": "Milo seemed a little off after his visitor left, not sure how",
+    "label": "unclear",
+    "confidence": 0.45,
+    "reason": "The observation is vague and could be behavioral or medical, so a human should triage it.",
+    "precedent": null,
+    "recipients": [
+      "#shelter-managers"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#shelter-managers",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T19:59:02.815Z",
+    "source": "seed"
+  },
+  {
+    "id": "seed_15",
+    "text": "Something smells weird near the back kennels but I can't tell what",
+    "label": "unclear",
+    "confidence": 0.4,
+    "reason": "The report is ambiguous with no clear category, so it routes to managers for review.",
+    "precedent": null,
+    "recipients": [
+      "#shelter-managers"
+    ],
+    "send": {
+      "mode": "seed",
+      "results": [
+        {
+          "channel": "#shelter-managers",
+          "status": "sent (seeded)"
+        }
+      ]
+    },
+    "timestamp": "2026-08-22T20:59:02.815Z",
+    "source": "seed"
+  }
+]
