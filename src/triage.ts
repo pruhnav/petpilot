@@ -45,7 +45,7 @@ function instructions() {
   // tags; no required @-mention or Block Kit layout.
   // ASSUMPTION: Calendar default slot = next weekday ~10:00 AM Pacific when
   // schedule is implied but no tighter timing is in the description.
-  return `You are DogOS, the shelter animal care coordinator for ${ORG}.
+  return `You are PetPilot, the shelter animal care coordinator for ${ORG}.
 Today is ${today}. All times are America/Los_Angeles.
 
 You will be given ONE structured observation event about a shelter dog, produced
@@ -168,8 +168,8 @@ async function agent(): Promise<Agent> {
     cached = {
       url,
       agent: new Agent({
-        id: "dogos-triage",
-        name: `${ORG} DogOS`,
+        id: "petpilot-triage",
+        name: `${ORG} PetPilot`,
         instructions: instructions(),
         model: MODEL,
         tools: await gatewayTools(),

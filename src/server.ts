@@ -215,7 +215,7 @@ app.get("/oauth/callback", async (c) => {
   try {
     const { tokens, clientInformation } = await completeGatewayAuth(params);
     const connected = await storeGatewayTokens(clientInformation, tokens);
-    log(connected ? "Gateway authorized. Ready for DogOS events." : "Gateway authorized, but it returned no tools.", connected ? "info" : "warn");
+    log(connected ? "Gateway authorized. Ready for PetPilot events." : "Gateway authorized, but it returned no tools.", connected ? "info" : "warn");
     return c.html("<title>Connected</title><body style=\"font:16px system-ui;padding:3rem\">Gateway connected. You can close this tab.</body>");
   } catch (e) {
     const error = e instanceof Error ? e.message : String(e);
