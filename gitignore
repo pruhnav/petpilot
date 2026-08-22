@@ -1,0 +1,17 @@
+# Secrets — NEVER commit these. They hold your API keys.
+.env
+.env.local
+*.env
+
+# Dependencies — huge, and anyone can regenerate with `npm install`.
+node_modules/
+
+# Logs and OS cruft
+npm-debug.log*
+*.log
+.DS_Store
+Thumbs.db
+
+# Arcade's local auth token cache, if you end up using the gateway flow
+.arcade-oauth.json
+.arcade-gateway
