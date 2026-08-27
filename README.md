@@ -128,5 +128,5 @@ tracking, and quarantine history that is currently hard to retrieve at all.
 
 - Pranav Balachander, [pruhnav](https://github.com/pruhnav)
 - Kiran Oguri, [kiran172](https://github.com/kiran172)
-- Arshia Bhattacharyya, [LinkedIn](https://www.linkedin.com/in/arshia-bhattacharyya-a732a5291/)
+- Arshia Bhattacharyya, [arshiabyya](https://github.com/arshiabyya)
 - Trisha Moorkoth, [tprofessional](https://github.com/tprofessional)
