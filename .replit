@@ -1,0 +1,9 @@
+run = "bash -c 'cd backend && npm install && npm start'"
+entrypoint = "backend/server.js"
+
+[env]
+PORT = "4000"
+
+[[ports]]
+localPort = 4000
+externalPort = 80

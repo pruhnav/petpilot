@@ -94,6 +94,7 @@
 
   <nav style="display: flex; align-items: center; gap: 24px; padding: 0 24px; background: var(--color-neutral-200); border-bottom: 1px solid var(--color-divider);">
     <button class="pp-tab" type="button" data-on="{{ tabFoster }}" onClick="{{ goFoster }}">Foster roster</button>
+    <button class="pp-tab" type="button" data-on="{{ tabTruth }}" onClick="{{ goTruth }}">Truth Queue</button>
     <button class="pp-tab" type="button" data-on="{{ tabMedical }}" onClick="{{ goMedical }}">Medical</button>
     <button class="pp-tab" type="button" data-on="{{ tabReports }}" onClick="{{ goReports }}">Intake &amp; outcomes</button>
     <span style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
@@ -317,6 +318,78 @@
     </section>
   </sc-if>
 
+  <sc-if value="{{ tabTruthOn }}" hint-placeholder-val="{{ false }}">
+    <div style="display: flex; align-items: center; gap: 14px; padding: 7px 24px; background: var(--color-accent-900); color: #f2f2f3;">
+      <span style="font-family: var(--font-heading); font-size: 15px; letter-spacing: .14em; text-transform: uppercase;">Truth Queue · Pending review</span>
+      <span style="margin-left: auto; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .7;">{{ truthCount }} pending</span>
+    </div>
+
+    <sc-if value="{{ truthNote }}" hint-placeholder-val="{{ false }}">
+      <div style="margin: 12px 24px 0; padding: 8px 12px; border: 1px solid var(--color-divider); background: var(--color-neutral-200); font-size: 12px;">{{ truthNote }}</div>
+    </sc-if>
+    <sc-if value="{{ truthError }}" hint-placeholder-val="{{ false }}">
+      <div style="margin: 12px 24px 0; padding: 8px 12px; border: 1px solid var(--color-accent-800); background: var(--color-accent-100); font-size: 12px; color: var(--color-accent-900);">{{ truthError }}</div>
+    </sc-if>
+    <sc-if value="{{ truthLoading }}" hint-placeholder-val="{{ true }}">
+      <div style="margin: 24px; color: var(--color-neutral-600);">Loading review queue…</div>
+    </sc-if>
+    <sc-if value="{{ truthEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="margin: 24px; text-align: center; color: var(--color-neutral-600); padding: 40px; border: 1px solid var(--color-divider);">No pending observations. DogOS is watching — nothing needs review right now.</div>
+    </sc-if>
+
+    <sc-if value="{{ truthHasCards }}" hint-placeholder-val="{{ false }}">
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; margin: 16px 24px 0;">
+        <sc-for list="{{ truthCards }}" as="t" hint-placeholder-count="2">
+          <div style="border: 1px solid var(--color-divider); background: var(--color-bg); display: flex; flex-direction: column;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--color-neutral-200); border-bottom: 1px solid var(--color-divider);">
+              <span class="tag tag-accent" style="letter-spacing: .08em; text-transform: uppercase; font-size: 10px;">{{ t.cardLabel }}</span>
+              <span style="font-family: var(--font-heading); font-size: 16px;">{{ t.dogName }}</span>
+              <span style="margin-left: auto; font-size: 11px; color: var(--color-neutral-600);">{{ t.timestamp }}</span>
+            </div>
+
+            <sc-if value="{{ t.videoUrl }}" hint-placeholder-val="{{ false }}">
+              <div style="position: relative; padding-top: 56.25%; background: #000;">
+                <iframe src="{{ t.videoUrl }}" title="Evidence" style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+              </div>
+            </sc-if>
+
+            <div style="padding: 12px;">
+              <div style="font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-neutral-700); margin-bottom: 4px;">{{ t.typeLabel }} · {{ t.source }} · confidence {{ t.confidencePct }}</div>
+              <div style="line-height: 1.5;">{{ t.description }}</div>
+            </div>
+
+            <sc-if value="{{ t.isEditing }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 0 12px 12px; display: grid; gap: 8px;">
+                <div>
+                  <label class="pp-label">Event type</label>
+                  <select class="pp-input" value="{{ truthEditType }}" onChange="{{ onEditType }}">
+                    <sc-for list="{{ eventTypeOptions }}" as="o" hint-placeholder-count="6">
+                      <option value="{{ o }}">{{ o }}</option>
+                    </sc-for>
+                  </select>
+                </div>
+                <div>
+                  <label class="pp-label">Description</label>
+                  <textarea class="pp-input" style="height: 60px;" value="{{ truthEditDescription }}" onChange="{{ onEditDescription }}"></textarea>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="pp-mini" type="button" onClick="{{ cancelEdit }}">Cancel</button>
+                  <button class="btn btn-primary" style="min-height: 28px; padding: 5px 14px; font-size: 12px;" type="button" data-id="{{ t._id }}" onClick="{{ saveEditAndConfirm }}">Save &amp; confirm</button>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--color-divider); margin-top: auto;">
+              <button class="pp-mini" type="button" data-id="{{ t._id }}" onClick="{{ dismissEvent }}">Pass</button>
+              <button class="pp-mini" type="button" data-id="{{ t._id }}" onClick="{{ startEdit }}">Edit</button>
+              <button class="btn btn-primary blueprint" style="min-height: 28px; padding: 5px 14px; font-size: 12px; margin-left: auto;" type="button" data-id="{{ t._id }}" onClick="{{ confirmEvent }}">Confirm<i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i></button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </sc-if>
+
   <sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ false }}">
     <div style="position: fixed; inset: 0; background: color-mix(in srgb, #1d1f20 42%, transparent); display: flex; justify-content: flex-end; z-index: 40;" onClick="{{ closePanel }}">
       <aside style="width: 500px; max-width: 92vw; height: 100%; background: var(--color-bg); border-left: 1px solid var(--color-divider); box-shadow: var(--shadow-lg); display: flex; flex-direction: column;" onClick="{{ stop }}">
@@ -329,6 +402,14 @@
           <div style="font-size: 12px; color: var(--color-neutral-700);">{{ panelSubtitle }}</div>
         </div>
         <div style="flex: 1; overflow-y: auto; padding: 0 16px 20px;">
+          <sc-if value="{{ panelHasVideo }}" hint-placeholder-val="{{ false }}">
+            <div style="margin: 14px 0; border: 1px solid var(--color-divider);">
+              <div style="position: relative; padding-top: 56.25%; background: #000;">
+                <iframe src="{{ panelVideoUrl }}" title="Camera evidence" style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+              </div>
+              <div style="padding: 6px 10px; font-size: 11px; color: var(--color-neutral-600);">{{ panelVideoCaption }}</div>
+            </div>
+          </sc-if>
           <table class="pp-grid">
             <thead>
               <tr>
@@ -371,7 +452,7 @@
           </sc-if>
 
           <sc-if value="{{ showPanelActionButton }}">
-            <button class="btn btn-secondary btn-block" style="height: 30px; font-size: 12px; margin-top: 14px;" type="button" onClick="{{ noop }}">{{ panelAction }}</button>
+            <button class="btn btn-secondary btn-block" style="height: 30px; font-size: 12px; margin-top: 14px;" type="button" onClick="{{ addPanelEntry }}">{{ panelAction }}</button>
           </sc-if>
         </div>
       </aside>
@@ -432,7 +513,9 @@ const ANIMALS = [
     ],
     camera: [
       { date: "—", label: "Normal", note: "No anomalies in the last 72 hours.", meta: "Kennel cam A-11" }
-    ] },
+    ],
+    videoUrl: "https://www.youtube.com/embed/u8tayZ9efAI",
+    videoSource: "Demo evidence clip (YouTube) — illustrative, not this shelter's actual camera feed." },
   { id: "A0492310", name: "Juniper", breed: "Beagle", age: "10 wk", location: "Foster — Alvarez household", locationNote: "Litter of 4, placed 15 Aug", color: "Tricolor", kennel: "F-301", status: "Underage foster", flag: "watch",
     health: [
       { date: "15 Aug", label: "Exam", note: "Weight 3.1 kg, on track. Deworming dose 2 given.", meta: "Dr. Amara Vance" }
@@ -463,7 +546,9 @@ const ANIMALS = [
     ],
     camera: [
       { date: "02:31", label: "Anomaly", note: "No movement detected for 9 hours in monitored zone.", meta: "Foster cam 1 · confidence 0.91" }
-    ] },
+    ],
+    videoUrl: "https://www.youtube.com/embed/60MkUjjo-lA",
+    videoSource: "Demo evidence clip (YouTube) — illustrative, not this shelter's actual camera feed." },
   { id: "A0492255", name: "Sable", breed: "Labrador Retriever", age: "6 yr 8 mo", location: "Foster — Nguyen household", locationNote: "Hospice foster, placed 08 Aug", color: "Black", kennel: "F-140", status: "Hospice foster", flag: "watch",
     health: [
       { date: "19 Aug", label: "Medication", note: "Gabapentin dose increased for arthritis comfort.", meta: "Dr. Amara Vance" },
@@ -478,7 +563,9 @@ const ANIMALS = [
     ],
     camera: [
       { date: "05:20", label: "Anomaly", note: "Frequent position changes overnight consistent with discomfort.", meta: "Foster cam 3 · confidence 0.64" }
-    ] },
+    ],
+    videoUrl: "https://www.youtube.com/embed/TV17LkI8xpY",
+    videoSource: "Demo evidence clip (YouTube) — illustrative, not this shelter's actual camera feed." },
   { id: "A0492402", name: "Fig", breed: "Dachshund", age: "1 yr 2 mo", location: "Foster — Delacroix household", locationNote: "Placed 18 Aug 2026", color: "Red Smooth", kennel: "F-402", status: "In foster", flag: "clear",
     health: [
       { date: "18 Aug", label: "Exam", note: "Spine and gait normal. Weight 6.2 kg.", meta: "Dr. Priya Raman" }
@@ -506,7 +593,9 @@ const ANIMALS = [
     ],
     camera: [
       { date: "—", label: "Normal", note: "No anomalies in the last 72 hours.", meta: "Kennel cam C-04" }
-    ] },
+    ],
+    videoUrl: "https://www.youtube.com/embed/MTRsov46jmk",
+    videoSource: "Demo evidence clip (YouTube) — illustrative, not this shelter's actual camera feed." },
   { id: "A0492126", name: "Dashiell", breed: "Terrier Mix", age: "1 yr 6 mo", location: "Foster — Iyer household", locationNote: "Placed 06 Aug 2026", color: "Wheaten", kennel: "F-165", status: "In foster", flag: "clear",
     health: [
       { date: "06 Aug", label: "Exam", note: "Healthy. Cleared for foster placement.", meta: "Dr. Amara Vance" }
@@ -520,7 +609,98 @@ const ANIMALS = [
     ],
     camera: [
       { date: "—", label: "Normal", note: "No anomalies in the last 72 hours.", meta: "Foster cam 5" }
-    ] }
+    ] },
+  { id: "A0492501", name: "Bella", breed: "Labrador Mix", age: "4 yr", location: "Northgate — A-Wing A3", locationNote: "Recovering from minor procedure", color: "Yellow", kennel: "A3", status: "Available", flag: "alert",
+    health: [
+      { date: "21 Aug", label: "Surgery", note: "Minor procedure completed, recovery uneventful.", meta: "Dr. Amara Vance · Northgate" },
+      { date: "10 Aug", label: "Vaccine", note: "Rabies 1-year due 25 Aug, reminder set.", meta: "Vet tech R. Idowu" }
+    ],
+    locations: [
+      { date: "02 Aug", label: "Move", note: "Intake holding → A-Wing kennel A3", meta: "Kennel staff" },
+      { date: "30 Jul", label: "Intake", note: "Stray, found near Elm & 9th", meta: "Animal control unit 6" }
+    ],
+    remarks: [
+      { date: "21 Aug", label: "Appetite", note: "Normal appetite, finished both meals.", meta: "Volunteer C. Nakamura" }
+    ],
+    camera: [
+      { date: "08:12", label: "Anomaly", note: "Expected breakfast interaction not observed during the 08:00 window.", meta: "Kennel cam A3 · confidence 0.83" },
+      { date: "09:40", label: "Anomaly", note: "Morning activity below Bella's recent baseline.", meta: "Kennel cam A3 · confidence 0.71" }
+    ],
+    videoUrl: "https://www.youtube.com/embed/99z4vJ1Ms5Y",
+    videoSource: "Demo evidence clip (YouTube) — illustrative, not this shelter's actual camera feed." },
+  { id: "A0492502", name: "Milo", breed: "Beagle Mix", age: "3 yr", location: "Northgate — A-Wing A2", locationNote: "Awaiting foster match", color: "Tricolor", kennel: "A2", status: "Available", flag: "clear",
+    health: [
+      { date: "12 Aug", label: "Exam", note: "Healthy, cleared for adoption events.", meta: "Dr. Priya Raman" }
+    ],
+    locations: [
+      { date: "28 Jul", label: "Move", note: "Intake holding → A-Wing kennel A2", meta: "Kennel staff" },
+      { date: "25 Jul", label: "Intake", note: "Owner surrender — moving", meta: "Front desk" }
+    ],
+    remarks: [
+      { date: "19 Aug", label: "Behavior", note: "Friendly with handlers, good on leash.", meta: "Volunteer C. Nakamura" }
+    ],
+    camera: [
+      { date: "—", label: "Normal", note: "No anomalies in the last 72 hours.", meta: "Kennel cam A2" }
+    ] },
+  { id: "A0492503", name: "Luna", breed: "Shepherd Mix", age: "5 yr", location: "Foster — Odom household", locationNote: "Placed 12 Aug 2026", color: "Black / Tan", kennel: "F-220", status: "In foster", flag: "clear",
+    health: [
+      { date: "12 Aug", label: "Exam", note: "Cleared for foster placement, no restrictions.", meta: "Dr. Amara Vance" },
+      { date: "20 Jul", label: "Vaccine", note: "DHPP booster administered at shelter.", meta: "Vet tech J. Salcedo · Northgate" }
+    ],
+    locations: [
+      { date: "12 Aug", label: "Transfer", note: "Northgate A-Wing A4 → Foster, Odom household", meta: "Released by M. Okonkwo" },
+      { date: "15 Jul", label: "Intake", note: "Stray, found near river trail", meta: "Animal control unit 2" }
+    ],
+    remarks: [
+      { date: "20 Aug", label: "Behavior", note: "Settling in well; routine notes carried over from her shelter file.", meta: "Reported by R. Odom" }
+    ],
+    camera: [
+      { date: "—", label: "Normal", note: "No anomalies in the last 72 hours.", meta: "Foster cam 6" }
+    ] },
+  { id: "A0492504", name: "Charlie", breed: "Golden Retriever Mix", age: "2 yr", location: "Northgate — A-Wing A5", locationNote: "Awaiting foster match", color: "Golden", kennel: "A5", status: "Available", flag: "clear",
+    health: [
+      { date: "14 Aug", label: "Exam", note: "Healthy, weight on track.", meta: "Dr. Priya Raman" }
+    ],
+    locations: [
+      { date: "05 Aug", label: "Move", note: "Intake holding → A-Wing kennel A5", meta: "Kennel staff" },
+      { date: "02 Aug", label: "Intake", note: "Transfer in from county partner shelter", meta: "Partner transport" }
+    ],
+    remarks: [
+      { date: "18 Aug", label: "Appetite", note: "Eating well, no concerns.", meta: "Volunteer C. Nakamura" }
+    ],
+    camera: [
+      { date: "—", label: "Normal", note: "No anomalies in the last 72 hours.", meta: "Kennel cam A5" }
+    ] },
+  { id: "A0492505", name: "Coco", breed: "Poodle Mix", age: "6 yr", location: "Northgate — A-Wing A6", locationNote: "Awaiting foster match", color: "Apricot", kennel: "A6", status: "Available", flag: "clear",
+    health: [
+      { date: "11 Aug", label: "Dental", note: "Grade 1 tartar, monitor.", meta: "Dr. Amara Vance" }
+    ],
+    locations: [
+      { date: "01 Aug", label: "Move", note: "Intake holding → A-Wing kennel A6", meta: "Kennel staff" },
+      { date: "29 Jul", label: "Intake", note: "Owner surrender — allergies", meta: "Front desk" }
+    ],
+    remarks: [
+      { date: "17 Aug", label: "Behavior", note: "Calm, good with other dogs in playgroup.", meta: "Volunteer C. Nakamura" }
+    ],
+    camera: [
+      { date: "—", label: "Normal", note: "No anomalies in the last 72 hours.", meta: "Kennel cam A6" }
+    ] },
+  { id: "A0492506", name: "Max", breed: "Mixed Breed", age: "4 yr", location: "Northgate — A-Wing A7", locationNote: "Record shows A7 — unconfirmed since 13:12", color: "Brindle", kennel: "A7", status: "Available", flag: "watch",
+    health: [
+      { date: "09 Aug", label: "Exam", note: "Healthy, no restrictions.", meta: "Dr. Priya Raman" }
+    ],
+    locations: [
+      { date: "20 Jul", label: "Move", note: "Intake holding → A-Wing kennel A7", meta: "Kennel staff" },
+      { date: "18 Jul", label: "Intake", note: "Stray, found downtown", meta: "Animal control unit 9" }
+    ],
+    remarks: [
+      { date: "22 Aug", label: "Location", note: "Volunteer reports Max seen near Medical wing; shelter record still lists kennel A7.", meta: "Reported by D. Whitfield" }
+    ],
+    camera: [
+      { date: "13:12", label: "Anomaly", note: "Max not observed in kennel A7 since 13:12; record and camera disagree on current location.", meta: "Kennel cam A7 · confidence 0.79" }
+    ],
+    videoUrl: "https://www.youtube.com/embed/Cjz7l_3Pdow",
+    videoSource: "Demo evidence clip (YouTube) — illustrative, not this shelter's actual camera feed." }
 ];
 
 const FLAG_TITLE = { alert: "Open camera anomaly", watch: "Under observation", clear: "No open flags" };
@@ -537,7 +717,14 @@ const MEDICAL = [
   { id: "A0491990", procedure: "Rabies booster", month: 8, day: 2, status: "scheduled", clinician: "Vet tech R. Idowu", where: "C-Wing" },
   { id: "A0492181", procedure: "DHPP booster 3 of 3", month: 8, day: 6, status: "scheduled", clinician: "Vet tech J. Salcedo", where: "Foster visit" },
   { id: "A0492255", procedure: "Hospice welfare check", month: 8, day: 9, status: "scheduled", clinician: "Dr. Amara Vance", where: "Foster visit" },
-  { id: "A0492310", procedure: "Spay surgery — litter", month: 8, day: 15, status: "scheduled", clinician: "Dr. Priya Raman", where: "Northgate clinic" }
+  { id: "A0492310", procedure: "Spay surgery — litter", month: 8, day: 15, status: "scheduled", clinician: "Dr. Priya Raman", where: "Northgate clinic" },
+  { id: "A0492501", procedure: "Post-procedure recheck", month: 7, day: 23, status: "due", clinician: "Dr. Amara Vance", where: "Northgate clinic" },
+  { id: "A0492501", procedure: "Rabies booster", month: 7, day: 25, status: "due", clinician: "Vet tech R. Idowu", where: "Northgate clinic" },
+  { id: "A0492502", procedure: "Annual exam", month: 7, day: 28, status: "scheduled", clinician: "Dr. Priya Raman", where: "Northgate clinic" },
+  { id: "A0492503", procedure: "Foster wellness check", month: 7, day: 30, status: "scheduled", clinician: "Vet tech R. Idowu", where: "Foster visit" },
+  { id: "A0492504", procedure: "DHPP booster", month: 7, day: 25, status: "scheduled", clinician: "Vet tech J. Salcedo", where: "Northgate clinic" },
+  { id: "A0492505", procedure: "Microchip scan", month: 7, day: 24, status: "scheduled", clinician: "Vet tech R. Idowu", where: "Northgate clinic" },
+  { id: "A0492506", procedure: "Rabies booster", month: 7, day: 26, status: "due", clinician: "Dr. Priya Raman", where: "Northgate clinic" }
 ];
 const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -585,9 +772,118 @@ const LABEL_DISPLAY = {
   unclear:         { chip: "Needs triage",    sev: "attention" }
 };
 
+// Live DogOS backend — see backend/server.js. "localhost:4000" only works when this file and the
+// backend are open on the same machine. Once the backend is deployed (e.g. to Replit), point this
+// page at it with ?api=https://your-deployed-url/api — that choice is remembered (localStorage) so
+// you only need to do it once per browser.
+function resolveApiBase() {
+  const DEFAULT_API_BASE = "http://localhost:4000/api";
+  try {
+    const fromQuery = new URLSearchParams(window.location.search).get("api");
+    if (fromQuery) {
+      localStorage.setItem("dogos_api_base", fromQuery);
+      return fromQuery;
+    }
+    const stored = localStorage.getItem("dogos_api_base");
+    if (stored) return stored;
+  } catch (err) {
+    // localStorage/URLSearchParams unavailable (e.g. a strict file:// context) — fall through.
+  }
+  return DEFAULT_API_BASE;
+}
+const API_BASE = resolveApiBase();
+
+const EVENT_TYPE_LABELS = {
+  FOOD_INTERACTION_MISSING: "Missed feeding",
+  PROLONGED_INACTIVITY: "Prolonged inactivity",
+  PACING: "Repeated pacing",
+  BOWL_APPROACH: "Bowl approach",
+  LOCATION_MISMATCH: "Location conflict",
+  POSSIBLE_BATHROOM_EVENT: "Possible bathroom event"
+};
+
+// Maps the placeholder evidence.videoSource values from the seed data to real demo clips.
+const VIDEO_SOURCE_MAP = {
+  youtube_demo_1: "https://www.youtube.com/embed/99z4vJ1Ms5Y",
+  youtube_demo_2: "https://www.youtube.com/embed/Cjz7l_3Pdow"
+};
+
 class Component extends DCLogic {
-  state = { query: "", status: "All statuses", flagFilter: "All flags", panel: null, tab: "foster", data: ANIMALS, refreshNote: "", month: 7,
-    composeText: "", composeBusy: false, composeStatus: "", composeStatusColor: "" };
+  state = {
+    query: "", status: "All statuses", flagFilter: "All flags", panel: null, tab: "foster", data: ANIMALS, refreshNote: "", month: 7,
+    truth: [], truthLoading: true, truthError: "", truthNote: "", truthEditingId: null, truthEditType: "", truthEditDescription: "",
+    composeText: "", composeBusy: false, composeStatus: "", composeStatusColor: ""
+  };
+
+  componentDidMount() {
+    this.loadReview();
+  }
+
+  loadReview = async () => {
+    try {
+      const res = await fetch(API_BASE + "/review");
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      this.setState({ truth: data, truthLoading: false, truthError: "" });
+    } catch (err) {
+      this.setState({ truthLoading: false, truthError: "Can't reach the DogOS backend at " + API_BASE + " — is it running?" });
+    }
+  };
+
+  runReviewAction = async (id, action, body) => {
+    const item = this.state.truth.find((t) => t._id === id);
+    const dogName = item && item.dog ? item.dog.name : id;
+    try {
+      const res = await fetch(API_BASE + "/review/" + id + "/" + action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviewedBy: "volunteer", ...body })
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      let note = "";
+      if (action === "confirm" && data.case) {
+        note = dogName + " confirmed → " + data.case.route + " (" + data.case.priority + ") · " +
+          data.case.actions.map((a) => a.type + ": " + a.status).join(" · ");
+      } else if (action === "dismiss") {
+        note = dogName + " dismissed — retained for audit.";
+      }
+      this.setState({ truthNote: note });
+      await this.loadReview();
+    } catch (err) {
+      this.setState({ truthNote: "Action failed: " + err.message });
+    }
+  };
+
+  confirmEvent = (ev) => this.runReviewAction(ev.currentTarget.getAttribute("data-id"), "confirm", {});
+  dismissEvent = (ev) => this.runReviewAction(ev.currentTarget.getAttribute("data-id"), "dismiss", {});
+
+  startEdit = (ev) => {
+    const id = ev.currentTarget.getAttribute("data-id");
+    const item = this.state.truth.find((t) => t._id === id);
+    this.setState({ truthEditingId: id, truthEditType: item ? item.type : "", truthEditDescription: item ? item.description : "" });
+  };
+
+  cancelEdit = () => this.setState({ truthEditingId: null });
+  onEditType = (ev) => this.setState({ truthEditType: ev.target.value });
+  onEditDescription = (ev) => this.setState({ truthEditDescription: ev.target.value });
+
+  saveEditAndConfirm = async (ev) => {
+    const id = ev.currentTarget.getAttribute("data-id");
+    const correction = { type: this.state.truthEditType, description: this.state.truthEditDescription };
+    try {
+      const res = await fetch(API_BASE + "/review/" + id + "/edit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ correction, confirm: true, reviewedBy: "volunteer" })
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      this.setState({ truthEditingId: null });
+      await this.runReviewAction(id, "confirm", {});
+    } catch (err) {
+      this.setState({ truthNote: "Edit failed: " + err.message });
+    }
+  };
 
   buildCalendar(month, nameFor) {
     const first = new Date(2026, month, 1).getDay();
@@ -711,6 +1007,39 @@ class Component extends DCLogic {
       });
   };
 
+  addPanelEntry = () => {
+    const panel = this.state.panel;
+    if (!panel) return;
+
+    if (panel.kind === "camera") {
+      const animal = this.state.data.find((a) => a.id === panel.id);
+      if (animal && animal.videoUrl) {
+        window.open(animal.videoUrl.replace("/embed/", "/watch?v="), "_blank");
+      } else {
+        window.alert("No camera feed is configured for this dog yet.");
+      }
+      return;
+    }
+
+    const arrayKeyByKind = { health: "health", location: "locations", remarks: "remarks" };
+    const labelByKind = { health: "Note", location: "Move", remarks: "Note" };
+    const key = arrayKeyByKind[panel.kind];
+    if (!key) return;
+
+    const text = window.prompt("Entry text:");
+    if (!text) return;
+
+    const entry = {
+      date: new Date().toLocaleDateString("en-US", { day: "2-digit", month: "short" }),
+      label: labelByKind[panel.kind],
+      note: text,
+      meta: "Added by volunteer · just now"
+    };
+    this.setState({
+      data: this.state.data.map((a) => (a.id === panel.id ? { ...a, [key]: [entry, ...a[key]] } : a))
+    });
+  };
+
   renderVals() {
     const density = this.props.density ?? "Comfortable";
     const data = this.state.data;
@@ -744,6 +1073,21 @@ class Component extends DCLogic {
         time: a.camera[0].date,
         detail: a.camera[0].note
       }));
+
+    const truthCards = (this.state.truth || []).map((t) => ({
+      _id: t._id,
+      dogName: t.dog ? t.dog.name : t.dogId,
+      dogBreed: t.dog ? t.dog.breed : "",
+      typeLabel: EVENT_TYPE_LABELS[t.type] || t.type,
+      cardLabel: t.type === "LOCATION_MISMATCH" ? "Data conflict" : "Observation review",
+      description: t.description,
+      confidencePct: t.confidence != null ? Math.round(t.confidence * 100) + "%" : "—",
+      source: t.source,
+      timestamp: t.timestamp ? new Date(t.timestamp).toLocaleString() : "",
+      videoUrl: VIDEO_SOURCE_MAP[(t.evidence || {}).videoSource] || "",
+      isEditing: this.state.truthEditingId === t._id
+    }));
+    const truthReady = !this.state.truthLoading && !this.state.truthError;
 
     const p = this.state.panel;
     const animal = p ? byId(p.id) : null;
@@ -813,7 +1157,32 @@ class Component extends DCLogic {
       composeStatusColor: this.state.composeStatusColor || "var(--color-neutral-700)",
       onComposeInput: this.onComposeInput,
       onComposeKey: this.onComposeKey,
-      submitRemark: this.submitRemark
+      submitRemark: this.submitRemark,
+      addPanelEntry: this.addPanelEntry,
+      panelHasVideo: !!(animal && p && p.kind === "camera" && animal.videoUrl),
+      panelVideoUrl: animal && animal.videoUrl ? animal.videoUrl : "",
+      panelVideoCaption: animal && animal.videoSource ? animal.videoSource : "",
+
+      tabTruth: this.state.tab === "truth" ? "1" : "0",
+      tabTruthOn: this.state.tab === "truth",
+      goTruth: () => this.setState({ tab: "truth" }),
+      truthCards,
+      truthCount: truthCards.length,
+      truthLoading: this.state.truthLoading,
+      truthError: this.state.truthError,
+      truthEmpty: truthReady && truthCards.length === 0,
+      truthHasCards: truthReady && truthCards.length > 0,
+      truthNote: this.state.truthNote,
+      truthEditType: this.state.truthEditType,
+      truthEditDescription: this.state.truthEditDescription,
+      eventTypeOptions: Object.keys(EVENT_TYPE_LABELS),
+      confirmEvent: this.confirmEvent,
+      dismissEvent: this.dismissEvent,
+      startEdit: this.startEdit,
+      cancelEdit: this.cancelEdit,
+      onEditType: this.onEditType,
+      onEditDescription: this.onEditDescription,
+      saveEditAndConfirm: this.saveEditAndConfirm
     };
   }
 }
