@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 170" width="1200" height="170" role="img" aria-labelledby="title desc">
+  <title id="title">PetPilot · Dogathon '26 Winner</title>
+  <desc id="desc">PetPilot's wordmark beside its blue logo tile, a white paw print whose main pad is a yellow navigation arrow, on a frosted glass panel over soft blue and gold color washes, with a gold "Dogathon '26 Winner" badge on the right.</desc>
+  <defs>
+    <clipPath id="frame"><rect width="1200" height="170" rx="26"/></clipPath>
+    <clipPath id="pane"><rect x="18" y="18" width="1164" height="134" rx="20"/></clipPath>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="38"/></filter>
+    <filter id="frost" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="46"/></filter>
+    <filter id="lift" x="-10%" y="-30%" width="120%" height="170%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#111827" flood-opacity=".10"/>
+    </filter>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e3a817"/>
+      <stop offset="1" stop-color="#b47f07"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity=".28"/>
+    </linearGradient>
+    <!-- The color washes, drawn twice: softly behind the pane, and blurred harder inside it to read as frosted glass. -->
+    <g id="washes">
+      <circle cx="110" cy="40" r="130" fill="#2f5bd3" fill-opacity=".38"/>
+      <circle cx="430" cy="175" r="130" fill="#5eb8d6" fill-opacity=".28"/>
+      <circle cx="760" cy="-10" r="110" fill="#8aa4f0" fill-opacity=".22"/>
+      <circle cx="1030" cy="150" r="150" fill="#fcc419" fill-opacity=".42"/>
+      <circle cx="1175" cy="20" r="90" fill="#f59f00" fill-opacity=".18"/>
+    </g>
+  </defs>
+
+  <g clip-path="url(#frame)">
+    <rect width="1200" height="170" fill="#eef2f8"/>
+    <use href="#washes" filter="url(#soft)"/>
+
+    <!-- Glass pane -->
+    <g filter="url(#lift)">
+      <rect x="18" y="18" width="1164" height="134" rx="20" fill="#eef2f8"/>
+    </g>
+    <g clip-path="url(#pane)">
+      <use href="#washes" filter="url(#frost)"/>
+      <rect x="18" y="18" width="1164" height="134" fill="url(#sheen)"/>
+    </g>
+    <rect x="18.5" y="18.5" width="1163" height="133" rx="19.5" fill="none" stroke="#ffffff" stroke-opacity=".9"/>
+    <path d="M38 19.5h1124" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+
+    <!-- Logo: same geometry as the app's .pp-logo mark, scaled from a 24-unit box. -->
+    <rect x="56" y="51" width="68" height="68" rx="18" fill="#2f5bd3"/>
+    <rect x="56.5" y="51.5" width="67" height="67" rx="17.5" fill="none" stroke="#ffffff" stroke-opacity=".18"/>
+    <g transform="translate(64 59) scale(2.1667)">
+      <g fill="#ffffff">
+        <ellipse cx="5" cy="10.4" rx="2.1" ry="2.6" transform="rotate(-20 5 10.4)"/>
+        <ellipse cx="9.2" cy="5.6" rx="2.15" ry="2.7" transform="rotate(-6 9.2 5.6)"/>
+        <ellipse cx="14.8" cy="5.6" rx="2.15" ry="2.7" transform="rotate(6 14.8 5.6)"/>
+        <ellipse cx="19" cy="10.4" rx="2.1" ry="2.6" transform="rotate(20 19 10.4)"/>
+      </g>
+      <path fill="#fcc419" d="M12 10.2 17.7 20.9a.75.75 0 0 1-1 1L12 19.3l-4.7 2.6a.75.75 0 0 1-1-1Z"/>
+    </g>
+
+    <text x="144" y="95" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="46" font-weight="700" letter-spacing="-1.6" fill="#111827">Pet<tspan fill="#2f5bd3">Pilot</tspan></text>
+    <text x="146" y="124" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="17" fill="#4b5563">Shelter observations, routed to the people who need to know.</text>
+
+    <!-- Winner badge -->
+    <rect x="814" y="58" width="330" height="54" rx="27" fill="url(#gold)"/>
+    <rect x="815" y="59" width="328" height="52" rx="26" fill="none" stroke="#ffffff" stroke-opacity=".35"/>
+    <!-- Trophy geometry from Lucide (ISC license). -->
+    <g transform="translate(840 71) scale(1.15)" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+      <path d="M4 22h16"/>
+      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+      <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+    </g>
+    <text x="882" y="92" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="18" font-weight="800" letter-spacing="1.4" fill="#ffffff" textLength="240" lengthAdjust="spacing">DOGATHON '26 WINNER</text>
+  </g>
+</svg>

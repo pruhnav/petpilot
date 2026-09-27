@@ -11,152 +11,367 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="_ds/industry-e22c8491-c797-4319-a05d-416d2d98957b/styles.css">
 <script src="_ds/industry-e22c8491-c797-4319-a05d-416d2d98957b/_ds_bundle.js"></script>
 <style>
-  body { margin: 0; background: var(--color-bg); }
-  a { color: var(--color-accent-700); }
-  a:hover { color: var(--color-accent-900); }
-  .pp-tab { background: none; border: 0; border-bottom: 2px solid transparent; cursor: pointer;
-    font: 600 12px/1 "Barlow", sans-serif; letter-spacing: .1em; text-transform: uppercase;
-    padding: 11px 2px; color: var(--color-neutral-700); }
-  .pp-tab:hover { color: var(--color-accent-800); }
-  .pp-tab[data-on="1"] { color: var(--color-accent-900); border-bottom-color: var(--color-accent); }
-  .pp-mini { border: 1px solid var(--color-divider); background: transparent; cursor: pointer;
-    font: 500 11px/1 "Barlow", sans-serif; letter-spacing: .05em; text-transform: uppercase;
-    padding: 5px 8px; border-radius: var(--radius-sm); color: var(--color-neutral-800); white-space: nowrap; }
-  .pp-mini:hover { background: color-mix(in srgb, var(--color-accent) 14%, transparent);
-    border-color: var(--color-accent); color: var(--color-accent-800); }
-  .pp-mini:active { background: color-mix(in srgb, var(--color-accent) 22%, transparent); }
-  .pp-mini:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
-  .pp-mini[data-hot="1"] { border-color: var(--color-accent-800); background: var(--color-accent-800); color: #f2f2f3; }
-  .pp-mini[data-hot="1"]:hover { background: var(--color-accent-700); border-color: var(--color-accent-700); color: #f2f2f3; }
-  .pp-mini[data-hot="2"] { position: relative; border-color: var(--color-accent); color: var(--color-accent-800); }
-  .pp-mini[data-hot="2"]::after { content: ""; position: absolute; top: -4px; right: -4px; width: 7px; height: 7px;
-    background: var(--color-accent-800); border: 1px solid var(--color-bg); }
-  .pp-grid { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .pp-grid th { text-align: left; font: 600 11px/1.2 "Barlow", sans-serif; letter-spacing: .09em;
-    text-transform: uppercase; color: var(--color-neutral-700); background: var(--color-neutral-200);
-    padding: 8px 10px; border-bottom: 1px solid var(--color-divider); white-space: nowrap; }
-  .pp-grid td { padding: 8px 10px; border-bottom: 1px solid color-mix(in srgb, #1d1f20 9%, transparent);
-    vertical-align: middle; }
-  .pp-grid tbody tr:nth-child(even) { background: color-mix(in srgb, #1d1f20 3%, transparent); }
-  .pp-grid tbody tr:hover { background: color-mix(in srgb, var(--color-accent) 11%, transparent); }
-  .pp-grid[data-density="Compact"] td { padding-block: 4px; }
-  .pp-cal { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  .pp-cal th { font: 600 10px/1 "Barlow", sans-serif; letter-spacing: .12em; text-transform: uppercase;
-    color: var(--color-neutral-700); background: var(--color-neutral-200); padding: 7px 8px;
-    text-align: left; border: 1px solid var(--color-divider); }
-  .pp-cal td { vertical-align: top; height: 104px; padding: 6px; border: 1px solid var(--color-divider); }
-  .pp-cal td[data-muted="1"] { background: color-mix(in srgb, #1d1f20 4%, transparent); }
-  .pp-cal td[data-today="1"] { box-shadow: inset 0 0 0 2px var(--color-accent); }
-  .pp-day { font: 600 12px/1 "Barlow", sans-serif; color: var(--color-neutral-700);
-    font-variant-numeric: tabular-nums; margin-bottom: 5px; }
-  .pp-ev { display: block; width: 100%; text-align: left; cursor: pointer; margin-bottom: 4px;
-    padding: 4px 6px; border: 1px solid var(--color-divider); border-left: 3px solid var(--color-neutral-400);
-    background: transparent; font: 400 11px/1.3 "Barlow", sans-serif; color: var(--color-text); }
-  .pp-ev:hover { background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
-  .pp-ev:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
-  .pp-ev[data-status="overdue"] { border-left-color: var(--color-accent-800); background: var(--color-accent-100); }
-  .pp-ev[data-status="due"] { border-left-color: var(--color-accent); }
-  .pp-ev b { font-weight: 600; }
+  /* ---------- Tokens ---------- */
+  :root {
+    --pp-ink: #111827; --pp-ink-2: #374151; --pp-muted: #6b7280; --pp-faint: #9ca3af;
+    --pp-accent: #2f5bd3; --pp-accent-soft: rgba(47, 91, 211, .09);
+    --pp-danger: #c0392b; --pp-danger-soft: rgba(192, 57, 43, .09);
+    --pp-warn: #a16207; --pp-warn-soft: rgba(161, 98, 7, .10);
+    --pp-ok: #15803d; --pp-ok-soft: rgba(21, 128, 61, .09);
+    --pp-info: #2f5bd3; --pp-info-soft: rgba(47, 91, 211, .09);
+    --pp-violet: #6d28d9; --pp-violet-soft: rgba(109, 40, 217, .08);
+    --pp-hairline: rgba(17, 24, 39, .08);
+
+    /* Elevation. 0 = page, 1 = cards on the page, 2 = floating chrome, 3 = overlays.
+       Each step is more opaque, blurrier, and casts a longer shadow. */
+    --glass-1: rgba(255, 255, 255, .60);
+    --glass-2: rgba(255, 255, 255, .74);
+    --glass-3: rgba(255, 255, 255, .88);
+    --glass-edge: rgba(255, 255, 255, .8);
+    --e1: 0 1px 2px rgba(17, 24, 39, .04), 0 2px 10px rgba(17, 24, 39, .04);
+    --e2: 0 1px 2px rgba(17, 24, 39, .05), 0 10px 30px rgba(17, 24, 39, .08);
+    --e3: 0 2px 6px rgba(17, 24, 39, .06), 0 28px 70px rgba(17, 24, 39, .20);
+    --r-sm: 7px; --r-md: 10px; --r-lg: 14px; --r-xl: 18px;
+  }
+
+  body {
+    margin: 0; color: var(--pp-ink);
+    font: 400 13.5px/1.45 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: linear-gradient(180deg, #e6ebf2 0%, #eef1f5 360px, #f3f4f6 900px) fixed;
+  }
+  button, input, select, textarea { font: inherit; }
+
+  /* ---------- Glass surfaces ---------- */
+  .g1, .g2, .g3 { border: 1px solid var(--glass-edge); }
+  .g1 { background: var(--glass-1); box-shadow: var(--e1); border-radius: var(--r-lg);
+    -webkit-backdrop-filter: blur(16px) saturate(150%); backdrop-filter: blur(16px) saturate(150%); }
+  .g2 { background: var(--glass-2); box-shadow: var(--e2); border-radius: var(--r-xl);
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%); }
+  .g3 { background: var(--glass-3); box-shadow: var(--e3); border-radius: var(--r-xl);
+    -webkit-backdrop-filter: blur(30px) saturate(170%); backdrop-filter: blur(30px) saturate(170%); }
+
+  /* ---------- Shell ---------- */
+  .pp-app { min-height: 100vh; padding: 14px 24px 64px; box-sizing: border-box; }
+  .pp-top { position: sticky; top: 14px; z-index: 30; display: flex; align-items: center; gap: 18px; padding: 8px 10px 8px 12px; }
+  .pp-brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .pp-logo { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; flex-shrink: 0;
+    background: var(--pp-accent); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14), 0 1px 2px rgba(17, 24, 39, .12); }
+  .pp-logo svg { width: 25px; height: 25px; }
+  .pp-logo .toe { fill: #fff; }
+  .pp-logo .pad { fill: #fcc419; }
+  .pp-wordmark-pilot { color: var(--pp-accent); }
+  .pp-brand-name { font-weight: 600; font-size: 14.5px; letter-spacing: -.01em; line-height: 1.2; }
+  .pp-brand-sub { font-size: 11.5px; color: var(--pp-muted); line-height: 1.2; }
+  .pp-seg { display: flex; gap: 2px; padding: 3px; border-radius: 11px; background: rgba(17, 24, 39, .05); overflow-x: auto; }
+  .pp-tab { border: 0; background: none; cursor: pointer; white-space: nowrap; padding: 6px 13px; border-radius: 8px;
+    font-weight: 500; font-size: 13px; color: var(--pp-muted); transition: background .12s, color .12s; }
+  .pp-tab:hover { color: var(--pp-ink); }
+  .pp-tab[data-on="1"] { background: #fff; color: var(--pp-ink); box-shadow: 0 1px 2px rgba(17, 24, 39, .08), 0 0 0 1px rgba(17, 24, 39, .04); }
+  .pp-top-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .pp-note { font-size: 12px; color: var(--pp-muted); }
+  .pp-user { display: flex; align-items: center; gap: 10px; padding-left: 12px; border-left: 1px solid var(--pp-hairline); }
+  .pp-user-name { font-size: 12.5px; font-weight: 500; line-height: 1.2; }
+  .pp-user-role { font-size: 11.5px; color: var(--pp-muted); line-height: 1.2; }
+  .pp-me { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 600;
+    color: var(--pp-ink-2); background: #e5e7eb; }
+
+  .pp-main { max-width: 1320px; margin: 0 auto; }
+  .pp-head { display: flex; align-items: flex-end; gap: 16px; margin: 28px 2px 18px; flex-wrap: wrap; }
+  .pp-eyebrow { font-size: 12px; font-weight: 500; color: var(--pp-muted); margin-bottom: 3px; }
+  .pp-h1 { margin: 0; font-family: inherit; font-size: 24px; line-height: 1.2; font-weight: 600; letter-spacing: -.02em; }
+  .pp-sub { margin: 5px 0 0; color: var(--pp-muted); font-size: 13px; }
+  .pp-head-actions { margin-left: auto; display: flex; gap: 8px; }
+
+  /* ---------- Stats ---------- */
+  .pp-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 14px; }
+  .pp-stat { padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+  .pp-stat-ico { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; flex-shrink: 0; }
+  .pp-stat-ico[data-tone="blue"] { background: var(--pp-info-soft); color: var(--pp-info); }
+  .pp-stat-ico[data-tone="green"] { background: var(--pp-ok-soft); color: var(--pp-ok); }
+  .pp-stat-ico[data-tone="red"] { background: var(--pp-danger-soft); color: var(--pp-danger); }
+  .pp-stat-ico[data-tone="violet"] { background: var(--pp-violet-soft); color: var(--pp-violet); }
+  .pp-stat-val { font-size: 21px; font-weight: 600; letter-spacing: -.02em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .pp-stat-label { font-size: 12.5px; color: var(--pp-muted); }
+
+  /* ---------- Icons ---------- */
+  .pp-ico { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .pp-ico-lg { width: 18px; height: 18px; }
+
+  /* ---------- Controls ---------- */
+  .pp-toolbar { display: grid; grid-template-columns: minmax(220px, 2fr) minmax(160px, 1fr) minmax(160px, 1fr) auto; gap: 8px; padding: 8px; margin-bottom: 14px; align-items: center; }
+  .pp-field { position: relative; }
+  .pp-field .pp-ico { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--pp-faint); pointer-events: none; }
+  .pp-input { width: 100%; box-sizing: border-box; height: 36px; padding: 0 11px; font-size: 13.5px; color: var(--pp-ink);
+    background: rgba(255, 255, 255, .85); border: 1px solid rgba(17, 24, 39, .12); border-radius: var(--r-sm);
+    transition: border-color .12s, box-shadow .12s, background .12s; }
+  .pp-field .pp-input { padding-left: 33px; }
+  .pp-input::placeholder { color: var(--pp-faint); }
+  .pp-input:hover { border-color: rgba(17, 24, 39, .2); }
+  .pp-input:focus, .pp-input:focus-visible { outline: none; background: #fff; border-color: var(--pp-accent); box-shadow: 0 0 0 3px rgba(47, 91, 211, .14); }
+  select.pp-input { appearance: none; -webkit-appearance: none; padding-right: 32px; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m3.5 5.25 3.5 3.5 3.5-3.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center; background-size: 14px 14px; }
+  textarea.pp-input { height: auto; min-height: 84px; padding: 9px 11px; resize: vertical; line-height: 1.5; }
+  .pp-label { display: block; font-size: 12px; font-weight: 500; color: var(--pp-ink-2); margin-bottom: 6px; }
+
+  /* Buttons: one solid primary, one bordered secondary, one ghost. No gradients or glow. */
+  .pp-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: var(--r-sm);
+    border: 1px solid transparent; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: 500;
+    transition: background .12s, border-color .12s, color .12s; }
+  .pp-btn:focus-visible, .pp-act:focus-visible, .pp-tab:focus-visible, .pp-ev:focus-visible, .pp-x:focus-visible {
+    outline: 2px solid var(--pp-accent); outline-offset: 2px; }
+  .pp-btn-primary { color: #fff; background: var(--pp-ink); border-color: var(--pp-ink); }
+  .pp-btn-primary:hover { background: #1f2937; border-color: #1f2937; }
+  .pp-btn-primary:active { background: #030712; }
+  .pp-btn-glass { color: var(--pp-ink); background: rgba(255, 255, 255, .85); border-color: rgba(17, 24, 39, .12); box-shadow: 0 1px 1px rgba(17, 24, 39, .04); }
+  .pp-btn-glass:hover { background: #fff; border-color: rgba(17, 24, 39, .2); }
+  .pp-btn-ghost { color: var(--pp-ink-2); background: transparent; }
+  .pp-btn-ghost:hover { background: rgba(17, 24, 39, .05); color: var(--pp-ink); }
+  .pp-btn-sm { height: 30px; padding: 0 11px; font-size: 12.5px; }
+  .pp-btn[data-busy="1"] { opacity: .6; pointer-events: none; }
+
+  /* ---------- Cards & tables ---------- */
+  .pp-card { overflow: hidden; margin-bottom: 14px; }
+  .pp-card-head { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--pp-hairline); flex-wrap: wrap; }
+  .pp-card-title { font-size: 14px; font-weight: 600; letter-spacing: -.01em; }
+  .pp-card-meta { font-size: 12.5px; color: var(--pp-muted); }
+  .pp-card-foot { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--pp-hairline); font-size: 12.5px; color: var(--pp-muted); }
+  .pp-badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+  .pp-badge[data-tone="red"] { background: var(--pp-danger-soft); color: var(--pp-danger); }
+  .pp-badge[data-tone="accent"] { background: var(--pp-accent-soft); color: var(--pp-accent); }
+  .pp-badge[data-tone="neutral"] { background: rgba(17, 24, 39, .06); color: var(--pp-ink-2); }
+  .pp-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .pp-grid { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+  .pp-grid th { text-align: left; font-size: 12px; font-weight: 500; color: var(--pp-muted); padding: 9px 14px;
+    border-bottom: 1px solid var(--pp-hairline); white-space: nowrap; }
+  .pp-grid th:first-child, .pp-grid td:first-child { padding-left: 16px; }
+  .pp-grid th:last-child, .pp-grid td:last-child { padding-right: 16px; }
+  .pp-grid td { padding: 11px 14px; border-bottom: 1px solid var(--pp-hairline); vertical-align: middle; color: var(--pp-ink-2); }
+  .pp-grid tbody tr { transition: background .1s; }
+  .pp-grid tbody tr:last-child td { border-bottom: 0; }
+  .pp-grid tbody tr:hover { background: rgba(255, 255, 255, .65); }
+  .pp-grid[data-density="Compact"] td { padding-block: 7px; }
   .pp-num { font-variant-numeric: tabular-nums; }
-  .pp-input { width: 100%; height: 28px; padding: 3px 8px; font: 400 13px/1 "Barlow", sans-serif;
-    color: var(--color-text); background: #fff; border: 1px solid var(--color-divider);
-    border-radius: var(--radius-sm); }
-  .pp-input:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 0; border-color: var(--color-accent); }
-  .tag { white-space: nowrap; }
-  .pp-label { display: block; font: 600 10px/1 "Barlow", sans-serif; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--color-neutral-600); margin-bottom: 5px; }
-  .pp-chip { display: inline-block; font: 600 10px/1 "Barlow", sans-serif; letter-spacing: .08em;
-    text-transform: uppercase; padding: 4px 7px; border-radius: var(--radius-sm);
-    border: 1px solid var(--color-divider); color: var(--color-neutral-800); background: transparent; }
-  .pp-chip[data-sev="urgent"] { border-color: var(--color-accent-800); background: var(--color-accent-800); color: #f2f2f3; }
-  .pp-chip[data-sev="attention"] { border-color: var(--color-accent); color: var(--color-accent-800);
-    background: color-mix(in srgb, var(--color-accent) 14%, transparent); }
-  .pp-chip[data-sev="routine"] { border-color: var(--color-divider); color: var(--color-neutral-700); }
+  .pp-mono { font-variant-numeric: tabular-nums; font-size: 12px; color: var(--pp-muted); }
+  .pp-strong { color: var(--pp-ink); }
+  .pp-minor { font-size: 12px; color: var(--pp-muted); }
+
+  .pp-who { display: flex; align-items: center; gap: 11px; }
+  .pp-avatar { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; flex-shrink: 0;
+    font-size: 12.5px; font-weight: 600; color: hsl(var(--h) 35% 32%); background: hsl(var(--h) 45% 92%); }
+  .pp-name { font-weight: 600; color: var(--pp-ink); line-height: 1.25; }
+
+  .pp-pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px 2px 7px; border-radius: 6px; font-size: 11.5px; font-weight: 500; white-space: nowrap; }
+  .pp-pill[data-tone="green"] { background: var(--pp-ok-soft); color: var(--pp-ok); }
+  .pp-pill[data-tone="blue"] { background: var(--pp-info-soft); color: var(--pp-info); }
+  .pp-pill[data-tone="amber"] { background: var(--pp-warn-soft); color: var(--pp-warn); }
+  .pp-pill[data-tone="red"] { background: var(--pp-danger-soft); color: var(--pp-danger); }
+  .pp-pill[data-tone="violet"] { background: var(--pp-violet-soft); color: var(--pp-violet); }
+
+  .pp-actions { display: inline-flex; gap: 2px; padding: 3px; border-radius: 9px; background: rgba(17, 24, 39, .04); }
+  .pp-act { position: relative; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 9px; border: 0; border-radius: 7px;
+    background: transparent; color: var(--pp-ink-2); cursor: pointer; font-size: 12.5px; font-weight: 500; white-space: nowrap; transition: background .1s, color .1s; }
+  .pp-act:hover { background: #fff; color: var(--pp-ink); box-shadow: 0 1px 2px rgba(17, 24, 39, .08); }
+  .pp-count { min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 5px; display: inline-grid; place-items: center;
+    font-size: 11px; font-weight: 600; background: rgba(17, 24, 39, .07); color: var(--pp-ink-2); }
+  /* Camera anomaly: 1 = review now, 2 = monitor. A static dot, nothing animated. */
+  .pp-act[data-hot="1"] { color: var(--pp-danger); }
+  .pp-act[data-hot="1"]::after, .pp-act[data-hot="2"]::after { content: ""; position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; border-radius: 50%; }
+  .pp-act[data-hot="1"], .pp-act[data-hot="2"] { padding-right: 15px; }
+  .pp-act[data-hot="1"]::after { background: var(--pp-danger); }
+  .pp-act[data-hot="2"]::after { background: var(--pp-warn); }
+
+  .pp-chip { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 500;
+    background: rgba(17, 24, 39, .06); color: var(--pp-ink-2); }
+  .pp-chip[data-sev="urgent"] { background: var(--pp-danger-soft); color: var(--pp-danger); box-shadow: inset 0 0 0 1px rgba(192, 57, 43, .25); }
+  .pp-chip[data-sev="attention"] { background: var(--pp-warn-soft); color: var(--pp-warn); }
+  .pp-chip[data-sev="routine"] { background: rgba(17, 24, 39, .06); color: var(--pp-ink-2); }
+
+  /* ---------- Calendar ---------- */
+  .pp-legend { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--pp-muted); }
+  .pp-legend i { width: 8px; height: 8px; border-radius: 2px; }
+  .pp-cal { width: 100%; border-collapse: separate; border-spacing: 5px; table-layout: fixed; }
+  .pp-cal th { font-size: 12px; font-weight: 500; color: var(--pp-muted); text-align: left; padding: 0 7px 2px; }
+  .pp-cal td { vertical-align: top; height: 104px; padding: 7px; border-radius: 8px; background: rgba(255, 255, 255, .55);
+    box-shadow: inset 0 0 0 1px var(--pp-hairline); }
+  .pp-cal td[data-muted="1"] { background: transparent; }
+  .pp-cal td[data-muted="1"] .pp-day { color: var(--pp-faint); }
+  .pp-cal td[data-today="1"] { background: #fff; box-shadow: inset 0 0 0 1.5px var(--pp-accent); }
+  .pp-cal td[data-today="1"] .pp-day { color: var(--pp-accent); }
+  .pp-day { font-size: 12px; font-weight: 500; color: var(--pp-ink-2); font-variant-numeric: tabular-nums; margin-bottom: 5px; }
+  .pp-ev { display: block; width: 100%; text-align: left; cursor: pointer; margin-bottom: 4px; padding: 4px 6px 4px 8px; border: 0; border-radius: 6px;
+    background: rgba(17, 24, 39, .045); box-shadow: inset 2px 0 0 var(--pp-faint); font-size: 11.5px; line-height: 1.35; color: var(--pp-ink); }
+  .pp-ev:hover { background: rgba(17, 24, 39, .08); }
+  .pp-ev[data-status="overdue"] { background: var(--pp-danger-soft); box-shadow: inset 2px 0 0 var(--pp-danger); }
+  .pp-ev[data-status="due"] { background: var(--pp-warn-soft); box-shadow: inset 2px 0 0 var(--pp-warn); }
+  .pp-ev b { font-weight: 600; }
+  .pp-ev div { color: var(--pp-muted); }
+
+  /* ---------- Reports ---------- */
+  .pp-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 14px; }
+  .pp-bar-row { display: grid; grid-template-columns: 150px 1fr 40px; align-items: center; gap: 14px; padding: 8px 0; }
+  .pp-bar { height: 6px; border-radius: 3px; background: rgba(17, 24, 39, .07); overflow: hidden; }
+  .pp-bar > div { height: 100%; border-radius: 3px; background: var(--pp-accent); }
+  .pp-bar[data-tone="ink"] > div { background: var(--pp-ink-2); }
+
+  /* ---------- Truth queue ---------- */
+  .pp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); gap: 14px; }
+  .pp-tcard { display: flex; flex-direction: column; overflow: hidden; }
+  .pp-video { position: relative; padding-top: 56.25%; background: #000; }
+  .pp-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .pp-banner { padding: 10px 14px; border-radius: var(--r-md); margin-bottom: 14px; font-size: 13px; }
+  .pp-banner[data-tone="error"] { background: var(--pp-danger-soft); color: var(--pp-danger); border: 1px solid rgba(192, 57, 43, .2); }
+  .pp-empty { text-align: center; padding: 52px 24px; color: var(--pp-muted); }
+
+  /* ---------- Drawer (overlay, top elevation) ---------- */
+  .pp-scrim { position: fixed; inset: 0; z-index: 50; display: flex; justify-content: flex-end; padding: 12px;
+    background: rgba(17, 24, 39, .24); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); animation: pp-fade .16s ease; }
+  .pp-drawer { width: 520px; max-width: 100%; display: flex; flex-direction: column; overflow: hidden; animation: pp-slide .22s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes pp-fade { from { opacity: 0; } }
+  @keyframes pp-slide { from { opacity: 0; transform: translateX(16px); } }
+  @media (prefers-reduced-motion: reduce) { .pp-scrim, .pp-drawer { animation: none; } }
+  .pp-drawer-head { display: flex; align-items: flex-start; gap: 12px; padding: 18px 20px 14px; border-bottom: 1px solid var(--pp-hairline); }
+  .pp-drawer-title { font-size: 18px; font-weight: 600; letter-spacing: -.015em; line-height: 1.25; }
+  .pp-x { margin-left: auto; width: 32px; height: 32px; border-radius: 8px; border: 0; background: transparent; color: var(--pp-muted);
+    display: grid; place-items: center; cursor: pointer; flex-shrink: 0; }
+  .pp-x:hover { background: rgba(17, 24, 39, .06); color: var(--pp-ink); }
+  .pp-drawer-body { flex: 1; overflow-y: auto; padding: 8px 20px 20px; }
+  .pp-entry { display: grid; grid-template-columns: 60px 1fr; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--pp-hairline); }
+  .pp-entry:last-child { border-bottom: 0; }
+  .pp-entry-date { font-size: 12px; color: var(--pp-muted); font-variant-numeric: tabular-nums; padding-top: 1px; }
+  .pp-entry-label { font-size: 12px; font-weight: 600; color: var(--pp-ink-2); margin-bottom: 2px; }
+  .pp-compose { margin-top: 14px; padding: 14px; border-radius: var(--r-lg); background: rgba(255, 255, 255, .75); border: 1px solid var(--pp-hairline); }
+
+  @media (max-width: 860px) {
+    .pp-app { padding: 10px 16px 48px; }
+    .pp-top { flex-wrap: wrap; top: 10px; }
+    .pp-seg { order: 3; width: 100%; }
+    .pp-user-text, .pp-brand-sub { display: none; }
+    .pp-stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .pp-stat { padding: 12px; }
+    .pp-toolbar { grid-template-columns: 1fr 1fr; }
+    .pp-toolbar > :first-child { grid-column: 1 / -1; }
+    .pp-bar-row { grid-template-columns: 110px 1fr 34px; }
+    .pp-scrim { padding: 0; }
+    .pp-drawer { border-radius: 0; }
+  }
 </style>
 </helmet>
 
-<div style="min-height: 100vh; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); font-size: 13px; padding-bottom: 60px;">
+<div class="pp-app">
 
-  <header style="display: flex; align-items: center; gap: 24px; padding: 0 24px; height: 46px; background: var(--color-accent-900); color: #f2f2f3;">
-    <div style="font-family: var(--font-heading); font-weight: 700; font-size: 18px; letter-spacing: .16em; text-transform: uppercase;">PetPilot</div>
-    <div style="font-size: 11px; letter-spacing: .1em; text-transform: uppercase; opacity: .55;">Shelter Management · System of Record</div>
-    <div style="margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 12px;">
-      <span style="opacity: .6;">Northgate Adoption Center</span>
-      <span style="width: 1px; height: 16px; background: rgba(242,242,243,.25);"></span>
-      <span>M. Okonkwo · Foster Coordinator</span>
-      <span style="width: 24px; height: 24px; border: 1px solid rgba(242,242,243,.4); display: grid; place-items: center; font-size: 10px; letter-spacing: .04em;">MO</span>
+  <header class="pp-top g2">
+    <div class="pp-brand">
+      <div class="pp-logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <ellipse class="toe" cx="5" cy="10.4" rx="2.1" ry="2.6" transform="rotate(-20 5 10.4)"/>
+          <ellipse class="toe" cx="9.2" cy="5.6" rx="2.15" ry="2.7" transform="rotate(-6 9.2 5.6)"/>
+          <ellipse class="toe" cx="14.8" cy="5.6" rx="2.15" ry="2.7" transform="rotate(6 14.8 5.6)"/>
+          <ellipse class="toe" cx="19" cy="10.4" rx="2.1" ry="2.6" transform="rotate(20 19 10.4)"/>
+          <path class="pad" d="M12 10.2 17.7 20.9a.75.75 0 0 1-1 1L12 19.3l-4.7 2.6a.75.75 0 0 1-1-1Z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="pp-brand-name">Pet<span class="pp-wordmark-pilot">Pilot</span></div>
+        <div class="pp-brand-sub">Northgate Adoption Center</div>
+      </div>
+    </div>
+    <nav class="pp-seg">
+      <button class="pp-tab" type="button" data-on="{{ tabFoster }}" onClick="{{ goFoster }}">Foster roster</button>
+      <button class="pp-tab" type="button" data-on="{{ tabTruth }}" onClick="{{ goTruth }}">Truth Queue</button>
+      <button class="pp-tab" type="button" data-on="{{ tabMedical }}" onClick="{{ goMedical }}">Medical</button>
+      <button class="pp-tab" type="button" data-on="{{ tabReports }}" onClick="{{ goReports }}">Intake &amp; outcomes</button>
+    </nav>
+    <div class="pp-top-right">
+      <span class="pp-note">{{ refreshNote }}</span>
+      <button class="pp-btn pp-btn-ghost pp-btn-sm" type="button" onClick="{{ refresh }}">
+        <svg class="pp-ico" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>Refresh
+      </button>
+      <div class="pp-user">
+        <div class="pp-user-text">
+          <div class="pp-user-name">M. Okonkwo</div>
+          <div class="pp-user-role">Foster Coordinator</div>
+        </div>
+        <span class="pp-me">MO</span>
+      </div>
     </div>
   </header>
 
-  <nav style="display: flex; align-items: center; gap: 24px; padding: 0 24px; background: var(--color-neutral-200); border-bottom: 1px solid var(--color-divider);">
-    <button class="pp-tab" type="button" data-on="{{ tabFoster }}" onClick="{{ goFoster }}">Foster roster</button>
-    <button class="pp-tab" type="button" data-on="{{ tabTruth }}" onClick="{{ goTruth }}">Truth Queue</button>
-    <button class="pp-tab" type="button" data-on="{{ tabMedical }}" onClick="{{ goMedical }}">Medical</button>
-    <button class="pp-tab" type="button" data-on="{{ tabReports }}" onClick="{{ goReports }}">Intake &amp; outcomes</button>
-    <span style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
-      <span style="font-size: 11px; color: var(--color-neutral-700);">{{ refreshNote }}</span>
-      <button class="pp-mini" type="button" onClick="{{ refresh }}">Refresh · de-duplicate</button>
-    </span>
-  </nav>
+  <main class="pp-main">
 
   <sc-if value="{{ tabFosterOn }}" hint-placeholder-val="{{ true }}">
-    <div style="display: flex; align-items: center; gap: 14px; padding: 7px 24px; background: var(--color-accent-900); color: #f2f2f3;">
-      <span style="font-family: var(--font-heading); font-size: 15px; letter-spacing: .14em; text-transform: uppercase;">Foster · Active placements</span>
-      <span style="margin-left: auto; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .7;">{{ countLabel }}</span>
-      <span style="font-size: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .7;">Updated 22 Aug 2026 · 06:00</span>
-    </div>
-
-    <div style="margin: 16px 24px 0; border: 1px solid var(--color-divider); background: transparent;">
-      <div style="padding: 5px 12px; background: var(--color-neutral-200); border-bottom: 1px solid var(--color-divider); font: 600 11px/1.4 'Barlow', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--color-neutral-700);">Search</div>
-      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 14px; align-items: end; padding: 12px;">
-        <div>
-          <label class="pp-label">Name, ID or kennel</label>
-          <input class="pp-input" placeholder="e.g. Marlowe, A0492181, F-114" value="{{ query }}" onChange="{{ onQuery }}">
-        </div>
-        <div>
-          <label class="pp-label">Placement status</label>
-          <select class="pp-input" value="{{ status }}" onChange="{{ onStatus }}">
-            <sc-for list="{{ statusOptions }}" as="o" hint-placeholder-count="4">
-              <option value="{{ o }}">{{ o }}</option>
-            </sc-for>
-          </select>
-        </div>
-        <div>
-          <label class="pp-label">Flag state</label>
-          <select class="pp-input" value="{{ flagFilter }}" onChange="{{ onFlag }}">
-            <sc-for list="{{ flagOptions }}" as="o" hint-placeholder-count="3">
-              <option value="{{ o }}">{{ o }}</option>
-            </sc-for>
-          </select>
-        </div>
-        <div style="display: flex; gap: 8px;">
-          <button class="pp-mini" type="button" onClick="{{ clearFilters }}">Clear</button>
-          <button class="btn btn-primary blueprint" style="min-height: 28px; padding: 5px 14px; font-size: 12px; white-space: nowrap;" type="button" onClick="{{ noop }}">Add placement<i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i></button>
-        </div>
+    <div class="pp-head">
+      <div>
+        <div class="pp-eyebrow">Foster</div>
+        <h1 class="pp-h1">Active placements</h1>
+        <p class="pp-sub">{{ countLabel }} · Updated 22 Aug 2026, 06:00</p>
+      </div>
+      <div class="pp-head-actions">
+        <button class="pp-btn pp-btn-primary" type="button" onClick="{{ noop }}">
+          <svg class="pp-ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add placement
+        </button>
       </div>
     </div>
 
-    <section style="margin: 16px 24px 0; border: 1px solid var(--color-divider);">
-      <div style="display: flex; align-items: center; gap: 12px; padding: 5px 12px; background: var(--color-neutral-200); border-bottom: 1px solid var(--color-divider);">
-        <span style="font: 600 11px/1.4 'Barlow', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--color-neutral-700);">Animal roster</span>
-        <span style="font-size: 11px; color: var(--color-neutral-600);">{{ alertSummary }}</span>
-        <span style="margin-left: auto; font-size: 11px; color: var(--color-neutral-600);">{{ countLabel }}</span>
+    <div class="pp-stats">
+      <div class="pp-stat g1">
+        <span class="pp-stat-ico" data-tone="blue"><svg class="pp-ico pp-ico-lg" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>
+        <div><div class="pp-stat-val">{{ statInFoster }}</div><div class="pp-stat-label">In foster homes</div></div>
+      </div>
+      <div class="pp-stat g1">
+        <span class="pp-stat-ico" data-tone="green"><svg class="pp-ico pp-ico-lg" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <div><div class="pp-stat-val">{{ statAvailable }}</div><div class="pp-stat-label">Awaiting a match</div></div>
+      </div>
+      <div class="pp-stat g1">
+        <span class="pp-stat-ico" data-tone="red"><svg class="pp-ico pp-ico-lg" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></svg></span>
+        <div><div class="pp-stat-val">{{ statFlags }}</div><div class="pp-stat-label">Camera anomalies</div></div>
+      </div>
+      <div class="pp-stat g1">
+        <span class="pp-stat-ico" data-tone="violet"><svg class="pp-ico pp-ico-lg" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+        <div><div class="pp-stat-val">{{ truthCount }}</div><div class="pp-stat-label">Pending review</div></div>
+      </div>
+    </div>
+
+    <div class="pp-toolbar g1">
+      <div class="pp-field">
+        <svg class="pp-ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input class="pp-input" aria-label="Search by name, ID or kennel" placeholder="Search name, ID or kennel" value="{{ query }}" onChange="{{ onQuery }}">
+      </div>
+      <select class="pp-input" aria-label="Placement status" value="{{ status }}" onChange="{{ onStatus }}">
+        <sc-for list="{{ statusOptions }}" as="o" hint-placeholder-count="4">
+          <option value="{{ o }}">{{ o }}</option>
+        </sc-for>
+      </select>
+      <select class="pp-input" aria-label="Flag state" value="{{ flagFilter }}" onChange="{{ onFlag }}">
+        <sc-for list="{{ flagOptions }}" as="o" hint-placeholder-count="3">
+          <option value="{{ o }}">{{ o }}</option>
+        </sc-for>
+      </select>
+      <button class="pp-btn pp-btn-ghost" type="button" onClick="{{ clearFilters }}">Clear</button>
+    </div>
+
+    <section class="pp-card g1">
+      <div class="pp-card-head">
+        <span class="pp-card-title">Animal roster</span>
+        <span class="pp-badge" data-tone="red"><span class="pp-dot"></span>{{ alertSummary }}</span>
+        <span class="pp-card-meta" style="margin-left: auto;">{{ countLabel }}</span>
       </div>
       <div style="overflow-x: auto;">
-        <table class="pp-grid" style="min-width: 1120px;" data-density="{{ density }}">
+        <table class="pp-grid" style="min-width: 1100px;" data-density="{{ density }}">
           <thead>
             <tr>
-              <th style="width: 160px;">Name</th>
-              <th style="width: 110px;">Animal ID</th>
+              <th style="width: 220px;">Animal</th>
               <th>Breed</th>
               <th style="width: 90px;">Age</th>
-              <th style="width: 210px;">Shelter location</th>
-              <th style="width: 120px;">Color</th>
-              <th style="width: 80px;">Kennel #</th>
+              <th style="width: 230px;">Location</th>
+              <th style="width: 110px;">Color</th>
+              <th style="width: 70px;">Kennel</th>
               <th style="text-align: right;">Records</th>
             </tr>
           </thead>
@@ -164,24 +379,39 @@
             <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
               <tr>
                 <td>
-                  <div style="font-weight: 600; font-size: 13px; line-height: 1.3;">{{ r.name }}</div>
-                  <div style="font-size: 11px; color: var(--color-neutral-600);">{{ r.status }}</div>
+                  <div class="pp-who">
+                    <span class="pp-avatar" style="--h: {{ r.hue }};">{{ r.initials }}</span>
+                    <div>
+                      <div class="pp-name">{{ r.name }}</div>
+                      <div class="pp-mono">{{ r.id }}</div>
+                    </div>
+                  </div>
                 </td>
-                <td class="pp-num" style="color: var(--color-neutral-800);">{{ r.id }}</td>
-                <td style="color: var(--color-neutral-800);">{{ r.breed }}</td>
+                <td>
+                  <div class="pp-strong">{{ r.breed }}</div>
+                  <span class="pp-pill" data-tone="{{ r.statusTone }}" style="margin-top: 4px;"><span class="pp-dot"></span>{{ r.status }}</span>
+                </td>
                 <td class="pp-num">{{ r.age }}</td>
                 <td>
-                  <div>{{ r.location }}</div>
-                  <div style="font-size: 11px; color: var(--color-neutral-600);">{{ r.locationNote }}</div>
+                  <div class="pp-strong">{{ r.location }}</div>
+                  <div class="pp-minor">{{ r.locationNote }}</div>
                 </td>
-                <td style="color: var(--color-neutral-800);">{{ r.color }}</td>
-                <td class="pp-num">{{ r.kennel }}</td>
+                <td>{{ r.color }}</td>
+                <td class="pp-strong">{{ r.kennel }}</td>
                 <td style="text-align: right;">
-                  <span style="display: inline-flex; gap: 6px;">
-                    <button class="pp-mini" type="button" data-id="{{ r.id }}" onClick="{{ openHealth }}">Health</button>
-                    <button class="pp-mini" type="button" data-id="{{ r.id }}" onClick="{{ openLocation }}">Location</button>
-                    <button class="pp-mini" type="button" data-id="{{ r.id }}" onClick="{{ openRemarks }}">Remarks {{ r.remarkCount }}</button>
-                    <button class="pp-mini" type="button" data-id="{{ r.id }}" data-hot="{{ r.cameraHot }}" onClick="{{ openCamera }}">Camera</button>
+                  <span class="pp-actions">
+                    <button class="pp-act" type="button" title="Medical record" data-id="{{ r.id }}" onClick="{{ openHealth }}">
+                      <svg class="pp-ico" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>Health
+                    </button>
+                    <button class="pp-act" type="button" title="Location history" data-id="{{ r.id }}" onClick="{{ openLocation }}">
+                      <svg class="pp-ico" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Location
+                    </button>
+                    <button class="pp-act" type="button" title="Remarks" data-id="{{ r.id }}" onClick="{{ openRemarks }}">
+                      <svg class="pp-ico" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Remarks<span class="pp-count">{{ r.remarkCount }}</span>
+                    </button>
+                    <button class="pp-act" type="button" title="Camera anomalies" data-id="{{ r.id }}" data-hot="{{ r.cameraHot }}" onClick="{{ openCamera }}">
+                      <svg class="pp-ico" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></svg>Camera
+                    </button>
                   </span>
                 </td>
               </tr>
@@ -189,37 +419,39 @@
           </tbody>
         </table>
       </div>
-      <div style="display: flex; align-items: center; gap: 12px; padding: 7px 12px; border-top: 1px solid var(--color-divider); background: var(--color-neutral-200); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-neutral-700);">
+      <div class="pp-card-foot">
         <span>{{ countLabel }}</span>
-        <span style="margin-left: auto; display: flex; gap: 8px;">
-          <button class="pp-mini" type="button" onClick="{{ noop }}">Prev</button>
-          <button class="pp-mini" type="button" onClick="{{ noop }}">Next</button>
+        <span style="margin-left: auto; display: flex; gap: 6px;">
+          <button class="pp-btn pp-btn-glass pp-btn-sm" type="button" onClick="{{ noop }}">Previous</button>
+          <button class="pp-btn pp-btn-glass pp-btn-sm" type="button" onClick="{{ noop }}">Next</button>
         </span>
       </div>
     </section>
   </sc-if>
 
   <sc-if value="{{ tabMedicalOn }}" hint-placeholder-val="{{ false }}">
-    <div style="display: flex; align-items: center; gap: 14px; padding: 7px 24px; background: var(--color-accent-900); color: #f2f2f3;">
-      <span style="font-family: var(--font-heading); font-size: 15px; letter-spacing: .14em; text-transform: uppercase;">Medical · Treatment calendar</span>
-      <span style="margin-left: auto; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .7;">Northgate clinic &amp; foster visits</span>
+    <div class="pp-head">
+      <div>
+        <div class="pp-eyebrow">Medical</div>
+        <h1 class="pp-h1">Treatment calendar</h1>
+        <p class="pp-sub">Northgate clinic &amp; foster visits · {{ monthCount }}</p>
+      </div>
     </div>
-    <section style="margin: 16px 24px 0; border: 1px solid var(--color-divider);">
-      <div style="display: flex; align-items: center; gap: 12px; padding: 5px 12px; background: var(--color-neutral-200); border-bottom: 1px solid var(--color-divider);">
+    <section class="pp-card g1">
+      <div class="pp-card-head">
         <span style="display: flex; gap: 6px;">
-          <button class="pp-mini" type="button" onClick="{{ prevMonth }}">◂ Prev</button>
-          <button class="pp-mini" type="button" onClick="{{ nextMonth }}">Next ▸</button>
+          <button class="pp-btn pp-btn-glass pp-btn-sm" type="button" aria-label="Previous month" onClick="{{ prevMonth }}"><svg class="pp-ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+          <button class="pp-btn pp-btn-glass pp-btn-sm" type="button" aria-label="Next month" onClick="{{ nextMonth }}"><svg class="pp-ico" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
         </span>
-        <span style="font: 600 12px/1.4 'Barlow', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--color-neutral-800);">{{ monthLabel }}</span>
-        <span style="margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 11px; color: var(--color-neutral-700);">
-          <span style="display: inline-flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 9px; border: 1px solid var(--color-divider); border-left: 3px solid var(--color-accent-800); background: var(--color-accent-100);"></span>Overdue</span>
-          <span style="display: inline-flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 9px; border: 1px solid var(--color-divider); border-left: 3px solid var(--color-accent);"></span>Due</span>
-          <span style="display: inline-flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 9px; border: 1px solid var(--color-divider); border-left: 3px solid var(--color-neutral-400);"></span>Scheduled</span>
-          <span>{{ monthCount }}</span>
+        <span class="pp-card-title" style="font-size: 15px;">{{ monthLabel }}</span>
+        <span style="margin-left: auto; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <span class="pp-legend"><i style="background: var(--pp-danger);"></i>Overdue</span>
+          <span class="pp-legend"><i style="background: var(--pp-warn);"></i>Due</span>
+          <span class="pp-legend"><i style="background: var(--pp-faint);"></i>Scheduled</span>
         </span>
       </div>
-      <div style="padding: 12px;">
-        <table class="pp-cal">
+      <div style="padding: 8px 10px 12px; overflow-x: auto;">
+        <table class="pp-cal" style="min-width: 760px;">
           <thead>
             <tr>
               <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
@@ -236,8 +468,8 @@
                     <sc-for list="{{ d.events }}" as="ev" hint-placeholder-count="0">
                       <button class="pp-ev" type="button" data-status="{{ ev.status }}" data-id="{{ ev.id }}" onClick="{{ openHealth }}">
                         <b>{{ ev.name }}</b>
-                        <div style="color: var(--color-neutral-700);">{{ ev.procedure }}</div>
-                        <div style="color: var(--color-neutral-600);">{{ ev.where }}</div>
+                        <div>{{ ev.procedure }}</div>
+                        <div>{{ ev.where }}</div>
                       </button>
                     </sc-for>
                   </td>
@@ -251,50 +483,48 @@
   </sc-if>
 
   <sc-if value="{{ tabReportsOn }}" hint-placeholder-val="{{ false }}">
-    <div style="display: flex; align-items: center; gap: 14px; padding: 7px 24px; background: var(--color-accent-900); color: #f2f2f3;">
-      <span style="font-family: var(--font-heading); font-size: 15px; letter-spacing: .14em; text-transform: uppercase;">Intake &amp; outcomes · Month to date</span>
-      <span style="margin-left: auto; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .7;">01–22 August 2026</span>
+    <div class="pp-head">
+      <div>
+        <div class="pp-eyebrow">Intake &amp; outcomes</div>
+        <h1 class="pp-h1">Month to date</h1>
+        <p class="pp-sub">01–22 August 2026</p>
+      </div>
     </div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 24px 0;">
-      <div style="border: 1px solid var(--color-divider);">
-        <div style="padding: 5px 12px; background: var(--color-neutral-200); border-bottom: 1px solid var(--color-divider); font: 600 11px/1.4 'Barlow', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--color-neutral-700);">Intake by source</div>
-        <div style="padding: 12px;">
+    <div class="pp-two">
+      <section class="pp-card g1">
+        <div class="pp-card-head"><span class="pp-card-title">Intake by source</span></div>
+        <div style="padding: 8px 16px 12px;">
           <sc-for list="{{ intakeBars }}" as="b" hint-placeholder-count="4">
-            <div style="display: grid; grid-template-columns: 150px 1fr 40px; align-items: center; gap: 12px; padding: 6px 0;">
-              <div>{{ b.label }}</div>
-              <div style="height: 9px; border: 1px solid var(--color-divider);">
-                <div style="height: 100%; background: var(--color-accent); width: {{ b.width }};"></div>
-              </div>
-              <div class="pp-num" style="text-align: right;">{{ b.value }}</div>
+            <div class="pp-bar-row">
+              <div class="pp-strong">{{ b.label }}</div>
+              <div class="pp-bar"><div style="width: {{ b.width }};"></div></div>
+              <div class="pp-num pp-strong" style="text-align: right;">{{ b.value }}</div>
             </div>
           </sc-for>
         </div>
-      </div>
-      <div style="border: 1px solid var(--color-divider);">
-        <div style="padding: 5px 12px; background: var(--color-neutral-200); border-bottom: 1px solid var(--color-divider); font: 600 11px/1.4 'Barlow', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--color-neutral-700);">Outcomes</div>
-        <div style="padding: 12px;">
+      </section>
+      <section class="pp-card g1">
+        <div class="pp-card-head"><span class="pp-card-title">Outcomes</span></div>
+        <div style="padding: 8px 16px 12px;">
           <sc-for list="{{ outcomeBars }}" as="b" hint-placeholder-count="4">
-            <div style="display: grid; grid-template-columns: 150px 1fr 40px; align-items: center; gap: 12px; padding: 6px 0;">
-              <div>{{ b.label }}</div>
-              <div style="height: 9px; border: 1px solid var(--color-divider);">
-                <div style="height: 100%; background: var(--color-accent-700); width: {{ b.width }};"></div>
-              </div>
-              <div class="pp-num" style="text-align: right;">{{ b.value }}</div>
+            <div class="pp-bar-row">
+              <div class="pp-strong">{{ b.label }}</div>
+              <div class="pp-bar" data-tone="ink"><div style="width: {{ b.width }};"></div></div>
+              <div class="pp-num pp-strong" style="text-align: right;">{{ b.value }}</div>
             </div>
           </sc-for>
         </div>
-      </div>
+      </section>
     </div>
-    <section style="margin: 16px 24px 0; border: 1px solid var(--color-divider);">
-      <div style="padding: 5px 12px; background: var(--color-neutral-200); border-bottom: 1px solid var(--color-divider); font: 600 11px/1.4 'Barlow', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--color-neutral-700);">Recent movement</div>
+    <section class="pp-card g1">
+      <div class="pp-card-head"><span class="pp-card-title">Recent movement</span></div>
       <div style="overflow-x: auto;">
-        <table class="pp-grid" style="min-width: 880px;">
+        <table class="pp-grid" style="min-width: 860px;">
           <thead>
             <tr>
               <th style="width: 90px;">Date</th>
-              <th style="width: 150px;">Animal</th>
-              <th style="width: 110px;">Animal ID</th>
-              <th style="width: 130px;">Event</th>
+              <th style="width: 200px;">Animal</th>
+              <th style="width: 140px;">Event</th>
               <th>Detail</th>
               <th style="text-align: right;">Records</th>
             </tr>
@@ -302,13 +532,14 @@
           <tbody>
             <sc-for list="{{ movementRows }}" as="v" hint-placeholder-count="6">
               <tr>
-                <td class="pp-num" style="white-space: nowrap;">{{ v.date }}</td>
-                <td style="font-family: var(--font-heading); font-size: 16px;">{{ v.name }}</td>
-                <td class="pp-num" style="color: var(--color-neutral-800);">{{ v.id }}</td>
-                <td><span class="tag tag-accent" style="letter-spacing: .08em; text-transform: uppercase;">{{ v.event }}</span></td>
-                <td style="color: var(--color-neutral-800);">{{ v.detail }}</td>
+                <td class="pp-mono" style="white-space: nowrap;">{{ v.date }}</td>
+                <td><div class="pp-name">{{ v.name }}</div><div class="pp-mono">{{ v.id }}</div></td>
+                <td><span class="pp-badge" data-tone="neutral">{{ v.event }}</span></td>
+                <td>{{ v.detail }}</td>
                 <td style="text-align: right;">
-                  <button class="pp-mini" type="button" data-id="{{ v.id }}" onClick="{{ openLocation }}">Location</button>
+                  <button class="pp-act" type="button" data-id="{{ v.id }}" onClick="{{ openLocation }}">
+                    <svg class="pp-ico" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Location
+                  </button>
                 </td>
               </tr>
             </sc-for>
@@ -319,47 +550,50 @@
   </sc-if>
 
   <sc-if value="{{ tabTruthOn }}" hint-placeholder-val="{{ false }}">
-    <div style="display: flex; align-items: center; gap: 14px; padding: 7px 24px; background: var(--color-accent-900); color: #f2f2f3;">
-      <span style="font-family: var(--font-heading); font-size: 15px; letter-spacing: .14em; text-transform: uppercase;">Truth Queue · Pending review</span>
-      <span style="margin-left: auto; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .7;">{{ truthCount }} pending</span>
+    <div class="pp-head">
+      <div>
+        <div class="pp-eyebrow">Truth Queue</div>
+        <h1 class="pp-h1">Pending review</h1>
+        <p class="pp-sub">{{ truthCount }} camera observations waiting for a human to confirm</p>
+      </div>
     </div>
 
     <sc-if value="{{ truthNote }}" hint-placeholder-val="{{ false }}">
-      <div style="margin: 12px 24px 0; padding: 8px 12px; border: 1px solid var(--color-divider); background: var(--color-neutral-200); font-size: 12px;">{{ truthNote }}</div>
+      <div class="pp-banner g1">{{ truthNote }}</div>
     </sc-if>
     <sc-if value="{{ truthError }}" hint-placeholder-val="{{ false }}">
-      <div style="margin: 12px 24px 0; padding: 8px 12px; border: 1px solid var(--color-accent-800); background: var(--color-accent-100); font-size: 12px; color: var(--color-accent-900);">{{ truthError }}</div>
+      <div class="pp-banner" data-tone="error">{{ truthError }}</div>
     </sc-if>
     <sc-if value="{{ truthLoading }}" hint-placeholder-val="{{ true }}">
-      <div style="margin: 24px; color: var(--color-neutral-600);">Loading review queue…</div>
+      <div class="pp-empty g1">Loading review queue…</div>
     </sc-if>
     <sc-if value="{{ truthEmpty }}" hint-placeholder-val="{{ false }}">
-      <div style="margin: 24px; text-align: center; color: var(--color-neutral-600); padding: 40px; border: 1px solid var(--color-divider);">No pending observations. DogOS is watching — nothing needs review right now.</div>
+      <div class="pp-empty g1">No pending observations. DogOS is watching — nothing needs review right now.</div>
     </sc-if>
 
     <sc-if value="{{ truthHasCards }}" hint-placeholder-val="{{ false }}">
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; margin: 16px 24px 0;">
+      <div class="pp-cards">
         <sc-for list="{{ truthCards }}" as="t" hint-placeholder-count="2">
-          <div style="border: 1px solid var(--color-divider); background: var(--color-bg); display: flex; flex-direction: column;">
-            <div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--color-neutral-200); border-bottom: 1px solid var(--color-divider);">
-              <span class="tag tag-accent" style="letter-spacing: .08em; text-transform: uppercase; font-size: 10px;">{{ t.cardLabel }}</span>
-              <span style="font-family: var(--font-heading); font-size: 16px;">{{ t.dogName }}</span>
-              <span style="margin-left: auto; font-size: 11px; color: var(--color-neutral-600);">{{ t.timestamp }}</span>
+          <article class="pp-tcard g1">
+            <div class="pp-card-head">
+              <span class="pp-badge" data-tone="accent">{{ t.cardLabel }}</span>
+              <span class="pp-card-title">{{ t.dogName }}</span>
+              <span class="pp-card-meta" style="margin-left: auto;">{{ t.timestamp }}</span>
             </div>
 
             <sc-if value="{{ t.videoUrl }}" hint-placeholder-val="{{ false }}">
-              <div style="position: relative; padding-top: 56.25%; background: #000;">
-                <iframe src="{{ t.videoUrl }}" title="Evidence" style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+              <div class="pp-video">
+                <iframe src="{{ t.videoUrl }}" title="Evidence" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
               </div>
             </sc-if>
 
-            <div style="padding: 12px;">
-              <div style="font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-neutral-700); margin-bottom: 4px;">{{ t.typeLabel }} · {{ t.source }} · confidence {{ t.confidencePct }}</div>
-              <div style="line-height: 1.5;">{{ t.description }}</div>
+            <div style="padding: 13px 16px;">
+              <div class="pp-minor" style="margin-bottom: 5px;">{{ t.typeLabel }} · {{ t.source }} · {{ t.confidencePct }} confidence</div>
+              <div style="line-height: 1.55; color: var(--pp-ink);">{{ t.description }}</div>
             </div>
 
             <sc-if value="{{ t.isEditing }}" hint-placeholder-val="{{ false }}">
-              <div style="padding: 0 12px 12px; display: grid; gap: 8px;">
+              <div style="padding: 0 16px 13px; display: grid; gap: 10px;">
                 <div>
                   <label class="pp-label">Event type</label>
                   <select class="pp-input" value="{{ truthEditType }}" onChange="{{ onEditType }}">
@@ -370,89 +604,83 @@
                 </div>
                 <div>
                   <label class="pp-label">Description</label>
-                  <textarea class="pp-input" style="height: 60px;" value="{{ truthEditDescription }}" onChange="{{ onEditDescription }}"></textarea>
+                  <textarea class="pp-input" value="{{ truthEditDescription }}" onChange="{{ onEditDescription }}"></textarea>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                  <button class="pp-mini" type="button" onClick="{{ cancelEdit }}">Cancel</button>
-                  <button class="btn btn-primary" style="min-height: 28px; padding: 5px 14px; font-size: 12px;" type="button" data-id="{{ t._id }}" onClick="{{ saveEditAndConfirm }}">Save &amp; confirm</button>
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                  <button class="pp-btn pp-btn-ghost pp-btn-sm" type="button" onClick="{{ cancelEdit }}">Cancel</button>
+                  <button class="pp-btn pp-btn-primary pp-btn-sm" type="button" data-id="{{ t._id }}" onClick="{{ saveEditAndConfirm }}">Save &amp; confirm</button>
                 </div>
               </div>
             </sc-if>
 
-            <div style="display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--color-divider); margin-top: auto;">
-              <button class="pp-mini" type="button" data-id="{{ t._id }}" onClick="{{ dismissEvent }}">Pass</button>
-              <button class="pp-mini" type="button" data-id="{{ t._id }}" onClick="{{ startEdit }}">Edit</button>
-              <button class="btn btn-primary blueprint" style="min-height: 28px; padding: 5px 14px; font-size: 12px; margin-left: auto;" type="button" data-id="{{ t._id }}" onClick="{{ confirmEvent }}">Confirm<i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i></button>
+            <div class="pp-card-foot" style="margin-top: auto;">
+              <button class="pp-btn pp-btn-ghost pp-btn-sm" type="button" data-id="{{ t._id }}" onClick="{{ dismissEvent }}">Pass</button>
+              <button class="pp-btn pp-btn-glass pp-btn-sm" type="button" data-id="{{ t._id }}" onClick="{{ startEdit }}">Edit</button>
+              <button class="pp-btn pp-btn-primary pp-btn-sm" style="margin-left: auto;" type="button" data-id="{{ t._id }}" onClick="{{ confirmEvent }}">Confirm</button>
             </div>
-          </div>
+          </article>
         </sc-for>
       </div>
     </sc-if>
   </sc-if>
 
+  </main>
+
   <sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ false }}">
-    <div style="position: fixed; inset: 0; background: color-mix(in srgb, #1d1f20 42%, transparent); display: flex; justify-content: flex-end; z-index: 40;" onClick="{{ closePanel }}">
-      <aside style="width: 500px; max-width: 92vw; height: 100%; background: var(--color-bg); border-left: 1px solid var(--color-divider); box-shadow: var(--shadow-lg); display: flex; flex-direction: column;" onClick="{{ stop }}">
-        <div style="display: flex; align-items: center; gap: 12px; padding: 7px 16px; background: var(--color-accent-900); color: #f2f2f3;">
-          <span style="font-family: var(--font-heading); font-size: 14px; letter-spacing: .14em; text-transform: uppercase;">{{ panelKicker }}</span>
-          <button class="pp-mini" style="margin-left: auto; border-color: rgba(242,242,243,.45); color: #f2f2f3;" type="button" onClick="{{ closePanel }}">Close</button>
+    <div class="pp-scrim" onClick="{{ closePanel }}">
+      <aside class="pp-drawer g3" onClick="{{ stop }}">
+        <div class="pp-drawer-head">
+          <div>
+            <div class="pp-eyebrow">{{ panelKicker }}</div>
+            <div class="pp-drawer-title">{{ panelTitle }}</div>
+            <div class="pp-minor" style="margin-top: 3px;">{{ panelSubtitle }}</div>
+          </div>
+          <button class="pp-x" type="button" aria-label="Close" onClick="{{ closePanel }}">
+            <svg class="pp-ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
         </div>
-        <div style="padding: 12px 16px; border-bottom: 1px solid var(--color-divider);">
-          <div style="font-family: var(--font-heading); font-size: 24px; line-height: 1.1;">{{ panelTitle }}</div>
-          <div style="font-size: 12px; color: var(--color-neutral-700);">{{ panelSubtitle }}</div>
-        </div>
-        <div style="flex: 1; overflow-y: auto; padding: 0 16px 20px;">
+        <div class="pp-drawer-body">
           <sc-if value="{{ panelHasVideo }}" hint-placeholder-val="{{ false }}">
-            <div style="margin: 14px 0; border: 1px solid var(--color-divider);">
-              <div style="position: relative; padding-top: 56.25%; background: #000;">
-                <iframe src="{{ panelVideoUrl }}" title="Camera evidence" style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <div class="g1" style="overflow: hidden; margin: 8px 0;">
+              <div class="pp-video">
+                <iframe src="{{ panelVideoUrl }}" title="Camera evidence" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
               </div>
-              <div style="padding: 6px 10px; font-size: 11px; color: var(--color-neutral-600);">{{ panelVideoCaption }}</div>
+              <div class="pp-minor" style="padding: 8px 12px;">{{ panelVideoCaption }}</div>
             </div>
           </sc-if>
-          <table class="pp-grid">
-            <thead>
-              <tr>
-                <th style="width: 70px;">Date</th>
-                <th style="width: 100px;">Type</th>
-                <th>Entry</th>
-              </tr>
-            </thead>
-            <tbody>
-              <sc-for list="{{ panelEntries }}" as="e" hint-placeholder-count="4">
-                <tr>
-                  <td class="pp-num" style="vertical-align: top; white-space: nowrap;">{{ e.date }}</td>
-                  <td style="vertical-align: top; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-accent-800);">{{ e.label }}</td>
-                  <td>
-                    <div style="line-height: 1.45;">{{ e.note }}</div>
-                    <sc-if value="{{ e.routed }}">
-                      <div style="margin-top: 5px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                        <span class="pp-chip" data-sev="{{ e.severity }}">{{ e.chipLabel }}</span>
-                        <span style="font-size: 11px; color: var(--color-neutral-700);">→ {{ e.recipients }}</span>
-                      </div>
-                    </sc-if>
-                    <div style="font-size: 11px; color: var(--color-neutral-600); margin-top: 2px;">{{ e.meta }}</div>
-                  </td>
-                </tr>
-              </sc-for>
-            </tbody>
-          </table>
+
+          <sc-for list="{{ panelEntries }}" as="e" hint-placeholder-count="4">
+            <div class="pp-entry">
+              <div class="pp-entry-date">{{ e.date }}</div>
+              <div>
+                <div class="pp-entry-label">{{ e.label }}</div>
+                <div style="line-height: 1.5; color: var(--pp-ink);">{{ e.note }}</div>
+                <sc-if value="{{ e.routed }}">
+                  <div style="margin-top: 7px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span class="pp-chip" data-sev="{{ e.severity }}">{{ e.chipLabel }}</span>
+                    <span class="pp-minor">→ {{ e.recipients }}</span>
+                  </div>
+                </sc-if>
+                <div class="pp-minor" style="margin-top: 4px;">{{ e.meta }}</div>
+              </div>
+            </div>
+          </sc-for>
 
           <sc-if value="{{ showCompose }}">
-            <div style="margin-top: 14px; border: 1px solid var(--color-divider); background: var(--color-neutral-200);">
-              <div style="padding: 5px 12px; border-bottom: 1px solid var(--color-divider); font: 600 11px/1.4 'Barlow', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--color-neutral-700);">New remark</div>
-              <div style="padding: 12px; display: flex; flex-direction: column; gap: 10px;">
-                <textarea class="pp-input" style="height: auto; min-height: 60px; padding: 8px; resize: vertical; font-family: 'Barlow', sans-serif;" placeholder="Describe what you saw — e.g. peed purple this morning, seemed fine otherwise" value="{{ composeText }}" onInput="{{ onComposeInput }}" onKeyDown="{{ onComposeKey }}"></textarea>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <button class="btn btn-primary blueprint" style="min-height: 30px; padding: 6px 16px; font-size: 12px;" type="button" data-busy="{{ composeBusy }}" onClick="{{ submitRemark }}">{{ composeButtonLabel }}<i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i></button>
-                  <span style="font-size: 11px; color: {{ composeStatusColor }};">{{ composeStatus }}</span>
-                </div>
+            <div class="pp-compose">
+              <label class="pp-label">New remark</label>
+              <textarea class="pp-input" placeholder="Describe what you saw — e.g. peed purple this morning, seemed fine otherwise" value="{{ composeText }}" onInput="{{ onComposeInput }}" onKeyDown="{{ onComposeKey }}"></textarea>
+              <div style="display: flex; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap;">
+                <button class="pp-btn pp-btn-primary" type="button" data-busy="{{ composeBusy }}" onClick="{{ submitRemark }}">{{ composeButtonLabel }}</button>
+                <span style="font-size: 12px; color: {{ composeStatusColor }};">{{ composeStatus }}</span>
               </div>
             </div>
           </sc-if>
 
           <sc-if value="{{ showPanelActionButton }}">
-            <button class="btn btn-secondary btn-block" style="height: 30px; font-size: 12px; margin-top: 14px;" type="button" onClick="{{ addPanelEntry }}">{{ panelAction }}</button>
+            <button class="pp-btn pp-btn-glass" style="width: 100%; margin-top: 14px;" type="button" onClick="{{ addPanelEntry }}">
+              <svg class="pp-ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>{{ panelAction }}
+            </button>
           </sc-if>
         </div>
       </aside>
@@ -757,6 +985,8 @@ const MOVEMENT = [
 ];
 
 const STATUS_OPTIONS = ["All statuses", "In foster", "Medical foster", "Hospice foster", "Underage foster", "Available"];
+// Placement status -> pill color on the roster.
+const STATUS_TONE = { "In foster": "blue", "Medical foster": "red", "Hospice foster": "violet", "Underage foster": "amber", "Available": "green" };
 const FLAG_OPTIONS = ["All flags", "Camera anomaly", "Under observation", "No open flags"];
 const FLAG_BY_OPTION = { "Camera anomaly": "alert", "Under observation": "watch", "No open flags": "clear" };
 
@@ -943,7 +1173,7 @@ class Component extends DCLogic {
     if (!text || !panel || this.state.composeBusy) return;
     const dogId = panel.id;
 
-    this.setState({ composeBusy: true, composeStatus: "Classifying and routing…", composeStatusColor: "var(--color-neutral-700)" });
+    this.setState({ composeBusy: true, composeStatus: "Classifying and routing…", composeStatusColor: "var(--pp-muted)" });
 
     fetch(REMARKS_API + "/remarks", {
       method: "POST",
@@ -984,16 +1214,16 @@ class Component extends DCLogic {
         let status, color;
         if (needsAuth) {
           status = "Added. Slack needs one-time authorization — check the backend log for the link.";
-          color = "var(--color-accent-800)";
+          color = "var(--pp-warn)";
         } else if (sentCount > 0) {
           status = "Routed to " + recipients + " · Slack alert sent";
-          color = "var(--color-accent-800)";
+          color = "var(--pp-ok)";
         } else if (anyError) {
           status = "Added, but the Slack send failed — see backend log.";
-          color = "var(--color-accent-800)";
+          color = "var(--pp-danger)";
         } else {
           status = "Added and logged for " + recipients + ".";
-          color = "var(--color-neutral-700)";
+          color = "var(--pp-muted)";
         }
 
         this.setState({ data, composeText: "", composeBusy: false, composeStatus: status, composeStatusColor: color });
@@ -1002,7 +1232,7 @@ class Component extends DCLogic {
         this.setState({
           composeBusy: false,
           composeStatus: "Couldn't reach the router (" + err.message + "). Is the backend running on :3001?",
-          composeStatusColor: "var(--color-accent-800)"
+          composeStatusColor: "var(--pp-danger)"
         });
       });
   };
@@ -1057,8 +1287,12 @@ class Component extends DCLogic {
     const rows = list.map((a) => ({
       ...a,
       flagTitle: FLAG_TITLE[a.flag],
-      remarkCount: "(" + a.remarks.length + ")",
-      cameraHot: a.camera[0].label !== "Anomaly" ? "0" : (a.flag === "alert" ? "1" : "2")
+      remarkCount: a.remarks.length,
+      cameraHot: a.camera[0].label !== "Anomaly" ? "0" : (a.flag === "alert" ? "1" : "2"),
+      initials: a.name.slice(0, 2),
+      // Stable per-animal avatar tint, derived from the ID so it never shifts between renders.
+      hue: [...a.id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7),
+      statusTone: STATUS_TONE[a.status] || "blue"
     }));
 
     const alerts = data
@@ -1113,8 +1347,11 @@ class Component extends DCLogic {
       flagOptions: FLAG_OPTIONS,
       clearFilters: () => this.setState({ query: "", status: "All statuses", flagFilter: "All flags" }),
       rows,
+      statInFoster: data.filter((a) => /foster/i.test(a.status)).length,
+      statAvailable: data.filter((a) => a.status === "Available").length,
+      statFlags: data.filter((a) => a.camera[0].label === "Anomaly").length,
       countLabel: "Record count " + list.length + " of " + data.length,
-      alertSummary: alerts.length + " camera anomalies flagged · last sweep 06:00",
+      alertSummary: data.filter((a) => a.camera[0].label === "Anomaly").length + " camera anomalies flagged · last sweep 06:00",
       tabFoster: this.state.tab === "foster" ? "1" : "0",
       tabMedical: this.state.tab === "medical" ? "1" : "0",
       tabReports: this.state.tab === "reports" ? "1" : "0",
@@ -1154,7 +1391,7 @@ class Component extends DCLogic {
       composeBusy: this.state.composeBusy ? "1" : "0",
       composeButtonLabel: this.state.composeBusy ? "Sending…" : "Classify & route",
       composeStatus: this.state.composeStatus,
-      composeStatusColor: this.state.composeStatusColor || "var(--color-neutral-700)",
+      composeStatusColor: this.state.composeStatusColor || "var(--pp-muted)",
       onComposeInput: this.onComposeInput,
       onComposeKey: this.onComposeKey,
       submitRemark: this.submitRemark,
